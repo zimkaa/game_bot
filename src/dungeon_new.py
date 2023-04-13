@@ -83,8 +83,6 @@ class Game:
         self.iter_number: int = 1
         self.my_hp: int = START_HP
         self.my_mp: int = START_MP
-        self.fight_planar: bool = False
-        self.fight_bait: bool = False
         self.nickname: str = NICKNAME
         self.end_battle: list[str | None] = list()
         self.prepare: list
@@ -346,8 +344,7 @@ class Game:
             # HACK
             if self.iter_number == 300:
                 break
-            self.fight_planar = False
-            self.fight_bait = False
+
             logger.warning(f"{self.iter_number=}")
             self.to_elixir()
 
@@ -362,17 +359,12 @@ class Game:
             if "var param_en" in res:
                 logger.success(f"IN fight {item}")
                 self.run_fight()
-                self.fight_planar = True
-                logger.success("set self.fight_planar = True")
             else:
                 result = self.connect.get_html_page_text()
                 if "var param_en" in result:
                     logger.success(f"IN fight {item}")
                     self.run_fight()
-                    self.fight_planar = True
-                    logger.success("set self.fight_planar = True")
                 else:
-                    self.fight_planar = False
                     item2 = BAIT
                     # item2 = PLANAR
                     self._use(item=item2)
@@ -380,15 +372,8 @@ class Game:
                     if "var param_en" in res2:
                         logger.success(f"IN fight {item2}")
                         self.run_fight()
-                        self.fight_bait = True
-                        logger.success("set self.fight_bait = True")
                     else:
                         logger.warning("No bot anywhere")
-                        self.fight_bait = False
-
-            # if not self.fight_planar and not self.fight_bait:
-            #     logger.success("\nsleep 1 sec\n")
-            #     time.sleep(1)
 
             if self.iter_number % 50 == 0:
                 logger.success(f"{self.iter_number=} _get_chat")
@@ -476,8 +461,6 @@ class Game:
                 logger.error(f"{results=}")
                 logger.error(f"{pattern=}")
                 logger.error(f"{item=}")
-                # TODO напал бот на природе
-                # raise Exception("напал бот на природе")
                 logger.critical("\nнапал бот на природе\n")
                 self.run_fight()
                 self.to_elixir()

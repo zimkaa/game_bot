@@ -11,6 +11,7 @@ __pycache__/
 ## captcha folders
 captcha/
 examples/
+logs/
 
 
 ## files
@@ -23,6 +24,7 @@ storage copy.json
 state.json
 test.json
 test.txt
+*.txt
 test copy.json
 test_trade_answer*
 history.json

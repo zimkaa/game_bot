@@ -1,0 +1,327 @@
+[
+  {
+    "group_name": "oktal_boss",
+    "names": "Кхалганский Налетчик",
+    "level_group": {
+      "1": "20,21,22,23,24",
+      "2": "25,26,27,28,29"
+    },
+    "level": {
+      "1": {
+        "kick": true,
+        "stableMagicHits": false
+      },
+      "2": {
+        "kick": true,
+        "stableMagicHits": false
+      },
+      "default": {
+        "hp": true,
+        "mp": true,
+        "mpNeedInsideBattle": 500,
+        "minMpCoefficient": 0.3,
+        "scroll": true,
+        "kick": true,
+        "superHit": true,
+        "stableHit": true,
+        "stableMagicHits": true,
+        "mpHit": 5,
+        "needHpPercent": 1.0,
+        "needMpPercent": 0.4
+      }
+    }
+
+  },
+  {
+    "group_name": "forpost_boss_list",
+    "names": "Прислужник Локара,Подручный Атамана,Громлех Синезубый,Друид-отступник,Хранитель Леса",
+    "level_group": {
+      "1": "20,21,22,23,24",
+      "2": "25,26,27,28,29"
+    },
+    "level": {
+      "1": {
+        "kick": true,
+        "stableMagicHits": false
+      },
+      "2": {
+        "scroll": true,
+        "kick": true,
+        "stableMagicHits": false
+      },
+      "default": {
+        "scroll": true,
+        "kick": true,
+        "stableMagicHits": false
+      }
+    }
+  },
+  {
+    "group_name": "Архипаладин Мортиуса",
+    "names": "Архипаладин Мортиуса",
+    "level_group": {
+      "1": "20,21,22,23,24",
+      "2": "25,26,27,28,29,30"
+    },
+    "level": {
+      "1": {
+        "scroll": false,
+        "mp": false,
+        "kick": true,
+        "kickCount": 1,
+        "stableMagicHits": false,
+        "stableHit": true
+      },
+      "2": {
+        "scroll": false,
+        "stableHit": true,
+        "kick": true,
+        "kickCount": 1,
+        "stableMagicHits": false,
+        "mp": false
+      },
+      "default": {
+        "scroll": false,
+        "stableHit": true,
+        "stableMagicHits": false,
+        "kick": true,
+        "kickCount": 1,
+        "mp": false
+      }
+    }
+  },
+  {
+    "group_name": "Паладин Мортиуса",
+    "names": "Паладин Мортиуса",
+    "level_group": {
+      "1": "10,21,22,23,24",
+      "2": "25,26,27,28,29,30"
+    },
+    "level": {
+      "1": {
+        "scroll": false,
+        "stableHit": true,
+        "stableMagicHits": false,
+        "kick": true,
+        "kickCount": 1,
+        "mp": false
+      },
+      "2": {
+        "scroll": false,
+        "stableHit": true,
+        "stableMagicHits": false,
+        "kick": true,
+        "kickCount": 1,
+        "mp": false
+      },
+      "default": {
+        "scroll": false,
+        "stableHit": true,
+        "stableMagicHits": false,
+        "kick": true,
+        "kickCount": 1,
+        "mp": false
+      }
+    }
+  },
+  {
+    "group_name": "Архилич",
+    "names": "Архилич",
+    "level_group": {
+      "1": "10,21,22,23,24",
+      "2": "25,26,27,28,29,30"
+    },
+    "level": {
+      "1": {
+        "scroll": false,
+        "stableHit": false,
+        "kick": true,
+        "kickCount": 1,
+        "stableMagicHits":true,
+        "mpHit": 5,
+        "mp": true
+      },
+      "2": {
+        "scroll": false,
+        "stableHit": false,
+        "kick": true,
+        "kickCount": 1,
+        "stableMagicHits":true,
+        "mpHit": 5,
+        "mp": true
+      },
+      "default": {
+        "scroll": false,
+        "stableHit": false,
+        "kick": true,
+        "kickCount": 1,
+        "stableMagicHits":true,
+        "mpHit": 5,
+        "mp": true
+      }
+    }
+  },
+  {
+    "group_name": "Лич",
+    "names": "Лич",
+    "level_group": {
+      "1": "10,21,22,23,24",
+      "2": "25,26,27,28,29,30"
+    },
+    "level": {
+      "1": {
+        "scroll": false,
+        "stableHit": false,
+        "kick": true,
+        "kickCount": 1,
+        "stableMagicHits":true,
+        "mpHit": 5,
+        "mp": true
+      },
+      "2": {
+        "scroll": false,
+        "stableHit": false,
+        "kick": true,
+        "kickCount": 1,
+        "stableMagicHits":true,
+        "mpHit": 5,
+        "mp": true
+      },
+      "default": {
+        "scroll": false,
+        "stableHit": false,
+        "kick": true,
+        "kickCount": 1,
+        "stableMagicHits":true,
+        "mpHit": 5,
+        "mp": true
+      }
+    }
+  },
+  {
+    "group_name": "Страж мавзолея",
+    "names": "Страж мавзолея",
+    "level_group": {
+      "1": "20,21,22,23,24,25,26,27",
+      "2": "28,29,30,31,32,33,34,35"
+    },
+    "level": {
+      "1": {
+        "kick": true,
+        "needHpPercent": 1.0,
+        "superHit": false,
+        "stableHit": true,
+        "stableMagicHits": false,
+        "MP": false,
+        "needMpPercent": 0.01,
+        "minMpCoefficient": 0.01
+      },
+      "2": {
+        "kick": true,
+        "superHit": true,
+        "stableHit": true,
+        "stableMagicHits": false,
+        "mpHit": 25,
+        "MP": false,
+        "mpNeedInsideBattle": 100,
+        "needMpPercent": 0.01,
+        "minMpCoefficient": 0.01
+      },
+      "default": {
+        "kick": true,
+        "needHpPercent": 1.0,
+        "superHit": false,
+        "stableHit": false,
+        "MP": false,
+        "mpNeedInsideBattle": 100,
+        "needMpPercent": 0.01,
+        "minMpCoefficient": 0.01
+      }
+    }
+  },
+  {
+    "group_name": "Огр-берсеркер",
+    "names": "Огр-берсеркер",
+    "level_group": {
+      "1": "20,21,22,23,24",
+      "2": "25,26,27,28,29"
+    },
+    "level": {
+      "1": {
+        "kick": true,
+        "stableHit": false,
+        "stableMagicHits": true,
+        "minMpCoefficient": 0.01
+      },
+      "2": {
+        "kick": true,
+        "minMpCoefficient": 0.01
+      },
+      "default": {
+        "kick": true,
+        "minMpCoefficient": 0.01
+      }
+    }
+  },
+  {
+    "group_name": "Страж крипты",
+    "names": "Страж крипты",
+    "level_group": {
+      "1": "20,21,22,23,24",
+      "2": "25,26,27,28,29"
+    },
+    "level": {
+      "1": {
+        "kick": true,
+        "stableHit": false,
+        "superHit": false,
+        "mpHit": 10,
+        "minMpCoefficient": 0.5
+      },
+      "2": {
+        "kick": true,
+        "stableHit": false,
+        "mpHit": 20,
+        "minMpCoefficient": 0.5
+      },
+      "26": {
+        "kick": true,
+        "stableHit": false,
+        "mpHit": 30,
+        "minMpCoefficient": 0.5
+      },
+      "default": {
+        "kick": true,
+        "minMpCoefficient": 0.01
+      }
+    }
+  },
+  {
+    "group_name": "Чумной зомби",
+    "names": "Чумной зомби",
+    "level_group": {
+      "1": "10,21,22,23,24",
+      "2": "25,26,27,28,29"
+    },
+    "level": {
+      "1": {
+        "hp": false,
+        "mp": false,
+        "stableHit": true,
+        "stableMagicHits": false
+      },
+      "2": {
+        "hp": false,
+        "mp": false,
+        "stableHit": true,
+        "stableMagicHits": false
+      },
+      "default": {
+        "hp": false,
+        "mp": false,
+        "stableHit": true,
+        "stableMagicHits": false
+      }
+    }
+  }
+]
