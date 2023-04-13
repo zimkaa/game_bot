@@ -4,23 +4,25 @@ import time
 
 from loguru import logger
 
-from config.pattern import FIND_IN_CITY
-from config.pattern import FIND_FEXP
-from config.pattern import FIND_PARAM_OW
-from config.pattern import FIND_PAGE_INVENTORY
-from config.pattern import FIND_FROM_NATURE_TO_INV
+from config import FIND_IN_CITY
+from config import FIND_FEXP
+from config import FIND_PARAM_OW
+from config import FIND_PAGE_INVENTORY
+from config import FIND_FROM_NATURE_TO_INV
 
-from config.urls import URL_MAIN
-from config.urls import URL_KEEP_CONNECTION
+from config import URL_MAIN
+from config import URL_KEEP_CONNECTION
 
-from config.local_config import NICKNAME
+from config import NICKNAME
 
 from fight import Fight
+
+from my_errors import FirstError
 
 from request import Connection
 from request import send_telegram
 
-from location.classes import Location
+from location import Location
 
 
 HEAL = "101"  # "элексир восстановления"
@@ -29,9 +31,9 @@ PLANAR = "152"  # планар
 
 BAIT = "102"  # Приманку Для Ботов
 
-START_HP = 2_000
+START_HP = 5_000
 
-START_MP = 5_000
+START_MP = 8_000
 
 
 def timing_decorator(func):
@@ -352,8 +354,8 @@ class Game:
             if self.my_hp < START_HP or self.my_mp < START_MP:
                 self._use(item=HEAL)
 
-            # item = PLANAR
-            item = BAIT
+            item = PLANAR
+            # item = BAIT
             self._use(item=item)
 
             res = self.connect.get_html_page_text()
@@ -362,21 +364,31 @@ class Game:
                 self.run_fight()
                 self.fight_planar = True
                 logger.success("set self.fight_planar = True")
-            # else:
-            #     self.fight_planar = False
-            #     self._use(item=BAIT)
-            #     res2 = self.connect.get_html_page_text()
-            #     # logger.success(f"{res2=}")
-            #     if "var param_en" in res2:
-            #         logger.success("IN fight bait")
-            #         self.run_fight()
-            #         self.fight_bait = True
-            #     else:
-            #         self.fight_bait = False
+            else:
+                result = self.connect.get_html_page_text()
+                if "var param_en" in result:
+                    logger.success(f"IN fight {item}")
+                    self.run_fight()
+                    self.fight_planar = True
+                    logger.success("set self.fight_planar = True")
+                else:
+                    self.fight_planar = False
+                    item2 = BAIT
+                    # item2 = PLANAR
+                    self._use(item=item2)
+                    res2 = self.connect.get_html_page_text()
+                    if "var param_en" in res2:
+                        logger.success(f"IN fight {item2}")
+                        self.run_fight()
+                        self.fight_bait = True
+                        logger.success("set self.fight_bait = True")
+                    else:
+                        logger.warning("No bot anywhere")
+                        self.fight_bait = False
 
-            if not self.fight_planar and not self.fight_bait:
-                logger.success("\nsleep 1 sec\n")
-                time.sleep(1)
+            # if not self.fight_planar and not self.fight_bait:
+            #     logger.success("\nsleep 1 sec\n")
+            #     time.sleep(1)
 
             if self.iter_number % 50 == 0:
                 logger.success(f"{self.iter_number=} _get_chat")
@@ -446,30 +458,34 @@ class Game:
         second_part = "&uid=).+?' }"
         pattern = first_part + item + second_part
         results = self._find_pattern(pattern)
-        for string in results:
-            arg_lst = string.replace(r"' }", "").split("&")
+        if results:
+            for string in results:
+                arg_lst = string.replace(r"' }", "").split("&")
+            try:
+                data = {
+                    "get_id": 43,
+                    "act": item,
+                    "uid": arg_lst[0],
+                }
+                for item in arg_lst[1:]:
+                    key, value = item.split("=")
+                    data[key] = value
 
-        try:
-            data = {
-                "get_id": 43,
-                "act": item,
-                "uid": arg_lst[0],
-            }
-            for item in arg_lst[1:]:
-                key, value = item.split("=")
-                data[key] = value
-
-            self.connect.get_html(URL_MAIN, data=data)
-        except UnboundLocalError:
-            logger.error(f"{results=}")
-            logger.error(f"{pattern=}")
-            logger.error(f"{item=}")
-            # TODO напал бот на природе
-            # raise Exception("напал бот на природе")
-            logger.critical("\nнапал бот на природе\n")
-            self.run_fight()
-            self.to_elixir()
-            self._use(item=item)
+                self.connect.get_html(URL_MAIN, data=data)
+            except UnboundLocalError:
+                logger.error(f"{results=}")
+                logger.error(f"{pattern=}")
+                logger.error(f"{item=}")
+                # TODO напал бот на природе
+                # raise Exception("напал бот на природе")
+                logger.critical("\nнапал бот на природе\n")
+                self.run_fight()
+                self.to_elixir()
+                self._use(item=item)
+        else:
+            text = f"\nНЕТ {item}\n"
+            logger.critical(text)
+            send_telegram(text)
 
     def where_i_am(self) -> Location:
         """where i am
