@@ -334,42 +334,7 @@ class Game:
         return text
 
     def ab_while(self) -> None:
-        # TODO 4800 --- bait планар   4200 приманки минимум. но лучше 8400
-        # 1) вхожу
-        # 2) просто инвентарь http://neverlands.ru/main.php?im=0
-        # 3) захожу в инвентарь элексиры  http://neverlands.ru/main.php?im=6
-        # 4) запускается цикл
-        #   4.1) лечение  101
-        #   4.2) юзаем планар. если вернулся пустой ответ юзаем приманку
-        #   4.3) бой
-        #   4.4) каждый 100 бой
-        #    4.5) запрос на получание чата чтобы не релогиниться
-        #    4.6) опять запрос на инвентарь просто инвентарь http://neverlands.ru/main.php?im=0
-        #    4.7) захожу в инвентарь элексиры  http://neverlands.ru/main.php?im=6
-        #   4.4)
-        #   4.4)
-        #   4.4)
-        #   4.4)
-        #   "элексир восстановления"
-        #   http://neverlands.ru/main.php?get_id=43&act=101&uid=203429153&curs=20&subid=0&ft=0&vcode=ecaab696d733cc9c21a48cf1afcf2ddc
-        #   curs = количество юзов в банке
-        # act=101 "элексир восстановления"
-        # act=102 Приманку Для Ботов
-        # act=103 Бутылку Шампанского
-        # act=104 Эликсир Мгновенного Исцеления
-        # act=105 Зелье Кровожадности
-        # act=106 Эликсир Быстроты
-        # act=107 Эликсир Блаженства
-        # act=108 Дар Иланы
-        # act=109 Эликсир из Подснежника
-        # act=110 Молодильное яблочко
-        # act=156 Фаросское Вино
-        # act=152 Приманку Для Ботов  ---- Планар!!!
-        # act=161 Усиление огня
-        #   приманку
-        # http://neverlands.ru/main.php?get_id=43&act=102&uid=201875330&curs=89&subid=0&ft=0&vcode=ddc527cef1063c007174fa049bd1df51
-        # http://neverlands.ru/main.php?get_id=43&act=102&uid=201875330&curs=89&subid=0&ft=0&vcode=272d6037e6d9bcbc2a4fad1dbb88a2c8
-        # просто инвентарь http://neverlands.ru/main.php?im=0
+        """Start while"""
         while True:
             # HACK
             if self.iter_number == 30:
@@ -378,10 +343,10 @@ class Game:
             self.to_elixir()
 
             if self.my_hp < 7_000 or self.my_mp < 5_000:
-                self.use(item=HEAL)
+                self._use(item=HEAL)
 
-            self.use(item=PLANAR)
-            # self.use(item=BAIT)
+            self._use(item=PLANAR)
+            # self._use(item=BAIT)
 
             res = self.connect.get_html_page_text()
             # logger.success(f"{res=}")
@@ -391,7 +356,7 @@ class Game:
                 self.fight_planar = True
             # else:
             #     self.fight_planar = False
-            #     self.use(item=BAIT)
+            #     self._use(item=BAIT)
             #     res2 = self.connect.get_html_page_text()
             #     # logger.success(f"{res2=}")
             #     if "var param_en" in res2:
@@ -405,22 +370,25 @@ class Game:
             #     time.sleep(1)
 
             # if self.iter_number % 100 == 0:
-            #     self.get_chat()
+            #     self._get_chat()
             #     self.go_to_inventory()
 
             self.iter_number += 1
 
     def go_to_inventory(self) -> None:
+        """construct the request and send it"""
         logger.success("go_to_inventory")
         data = {"im": 0}
         self.connect.get_html(URL_MAIN, data=data)
 
     def go_to_elixir(self) -> None:
+        """construct the request and send it"""
         logger.success("go_to_elixir")
         data = {"im": 6}
         self.connect.get_html(URL_MAIN, data=data)
 
-    def get_chat(self) -> None:
+    def _get_chat(self) -> None:
+        """Get chat"""
         url = URL_KEEP_CONNECTION.format(rand_float=random.random())
         self.connect.get_html(url)
         text_string = self.connect.get_html_page_text()
@@ -428,11 +396,16 @@ class Game:
         pattern = r"(?<=\.add_msg\().+(?=\);)"
         finder = re.compile(pattern)
         messages = finder.findall(text_string)
-        logger.info(f"get_chat {messages=}")
-        self.is_message_for_person(messages)
+        logger.info(f"_get_chat {messages=}")
+        self._is_message_for_person(messages)
 
     @staticmethod
-    def is_message_for_person(messages: list[str]):
+    def _is_message_for_person(messages: list[str]) -> None:
+        """Send messages for person
+
+        :param messages: list message
+        :type messages: list[str]
+        """
         pattern = r"(?<=<SPL>).+(?=<SPL>)"
         finder = re.compile(pattern)
         for mes in messages:
@@ -453,8 +426,12 @@ class Game:
                         send_telegram(text_for_message)
 
     @timing_decorator
-    def use(self, *, item: str) -> None:
-        """Heal HP\MP"""
+    def _use(self, *, item: str) -> None:
+        """Use something like HP/MP
+
+        :param item: using item num
+        :type item: str
+        """
         first_part = r"(?<=get_id=43&act="
         second_part = "&uid=).+?' }"
         pattern = first_part + item + second_part
@@ -472,7 +449,7 @@ class Game:
             logger.error(f"{results=}")
             logger.error(f"{pattern=}")
             logger.error(f"{item=}")
-            # logger.error(f"{self.connect.get_html_page_text()=}")
+            raise Exception("For test")
 
         for item in arg_lst[1:]:
             key, value = item.split("=")
@@ -481,7 +458,11 @@ class Game:
         self.connect.get_html(URL_MAIN, data=data)
 
     def where_i_am(self) -> Location:
-        """where i am"""
+        """where i am
+
+        :return: location where i am
+        :rtype: Location
+        """
         # When you are login person can be in these three position
         # 1 - info
         # 2 - inventory
