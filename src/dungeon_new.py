@@ -14,9 +14,6 @@ from config.urls import URL_MAIN
 from config.urls import URL_KEEP_CONNECTION
 
 from config.local_config import NICKNAME
-from config.local_config import PROXY
-from config.local_config import PROXIES
-from config.local_config import PROXY_IP
 
 from fight import Fight
 
@@ -31,6 +28,10 @@ HEAL = "101"  # "элексир восстановления"
 PLANAR = "152"  # планар
 
 BAIT = "102"  # Приманку Для Ботов
+
+START_HP = 2_000
+
+START_MP = 5_000
 
 
 def timing_decorator(func):
@@ -77,13 +78,14 @@ class Game:
 
     def _init_variables(self) -> None:
         """Init variables"""
-        self.iter_number: int = 0
-        self.my_hp: int = 5_000
-        self.my_mp: int = 5_000
+        self.iter_number: int = 1
+        self.my_hp: int = START_HP
+        self.my_mp: int = START_MP
         self.fight_planar: bool = False
         self.fight_bait: bool = False
         self.nickname: str = NICKNAME
         self.end_battle: list[str | None] = list()
+        self.prepare: list
 
     def _find_pattern(self, pattern: str, search_string: str = None) -> list[str | None]:
         """Find from pattern
@@ -199,7 +201,7 @@ class Game:
         """
         self._is_alive()
         if self._is_end_battle():
-            data = self._create_end_battle_data()
+            return self._create_end_battle_data()
 
         self.fight_class.setup_value(self.connect.get_html_page_text(), fight_iteration)
 
@@ -325,6 +327,9 @@ class Game:
         :rtype: str
         """
 
+        self._get_chat()
+        self.go_to_inventory()
+
         self.to_elixir()
 
         self.ab_while()
@@ -337,23 +342,26 @@ class Game:
         """Start while"""
         while True:
             # HACK
-            if self.iter_number == 30:
+            if self.iter_number == 300:
                 break
+            self.fight_planar = False
+            self.fight_bait = False
             logger.warning(f"{self.iter_number=}")
             self.to_elixir()
 
-            if self.my_hp < 7_000 or self.my_mp < 5_000:
+            if self.my_hp < START_HP or self.my_mp < START_MP:
                 self._use(item=HEAL)
 
-            self._use(item=PLANAR)
-            # self._use(item=BAIT)
+            # item = PLANAR
+            item = BAIT
+            self._use(item=item)
 
             res = self.connect.get_html_page_text()
-            # logger.success(f"{res=}")
             if "var param_en" in res:
-                logger.success("IN fight planar")
+                logger.success(f"IN fight {item}")
                 self.run_fight()
                 self.fight_planar = True
+                logger.success("set self.fight_planar = True")
             # else:
             #     self.fight_planar = False
             #     self._use(item=BAIT)
@@ -366,12 +374,14 @@ class Game:
             #     else:
             #         self.fight_bait = False
 
-            # if not self.fight_planar and not self.fight_bait:
-            #     time.sleep(1)
+            if not self.fight_planar and not self.fight_bait:
+                logger.success("\nsleep 1 sec\n")
+                time.sleep(1)
 
-            # if self.iter_number % 100 == 0:
-            #     self._get_chat()
-            #     self.go_to_inventory()
+            if self.iter_number % 50 == 0:
+                logger.success(f"{self.iter_number=} _get_chat")
+                self._get_chat()
+                self.go_to_inventory()
 
             self.iter_number += 1
 
@@ -445,17 +455,21 @@ class Game:
                 "act": item,
                 "uid": arg_lst[0],
             }
+            for item in arg_lst[1:]:
+                key, value = item.split("=")
+                data[key] = value
+
+            self.connect.get_html(URL_MAIN, data=data)
         except UnboundLocalError:
             logger.error(f"{results=}")
             logger.error(f"{pattern=}")
             logger.error(f"{item=}")
-            raise Exception("For test")
-
-        for item in arg_lst[1:]:
-            key, value = item.split("=")
-            data[key] = value
-
-        self.connect.get_html(URL_MAIN, data=data)
+            # TODO напал бот на природе
+            # raise Exception("напал бот на природе")
+            logger.critical("\nнапал бот на природе\n")
+            self.run_fight()
+            self.to_elixir()
+            self._use(item=item)
 
     def where_i_am(self) -> Location:
         """where i am
