@@ -13,7 +13,6 @@ from config import FIND_FIGHT
 from config import URL_MAIN
 
 from request import Connection
-from request import send_telegram
 
 
 class Location(str, Enum):
