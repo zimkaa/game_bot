@@ -68,9 +68,7 @@ if __name__ == "__main__":
     logger.add("main.log", format="{time} {level} {message}", level="TRACE", rotation="10 MB", compression="zip")
 
     try:
-        start_time = perf_counter()
         main()
-        logger.success(f"timer {perf_counter()- start_time:.5f} seconds")
     except Exception as error:
         text = f"{NICKNAME} - trouble!!!"
         logger.error(error)
