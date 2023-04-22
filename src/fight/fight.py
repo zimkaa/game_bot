@@ -4,10 +4,6 @@ import re
 from pathlib import Path
 from typing import Any
 
-from loguru import logger
-from pandas import DataFrame
-from pandas import concat
-
 from config import ANY_PROF_HITS  # noqa: I100
 from config import DICT_NAME_BOOST_MP
 from config import FIND_FIGHT_VARIABLES_PART1
@@ -22,6 +18,11 @@ from config import PERSON_ROLE
 from config import PERSON_TYPE
 from config import WARRIOR
 
+from loguru import logger
+
+from pandas import DataFrame
+from pandas import concat
+
 from request import send_telegram
 
 from schemas import FightConfig
@@ -31,7 +32,12 @@ from .config_fight import get_fight_config
 
 
 logger.add(
-    "battle.log", format="{time} {level} {message}", filter="fight", level="TRACE", rotation="10 MB", compression="zip"
+    "battle.log",
+    format="{time} {level} {message}",
+    filter="fight",
+    level="TRACE",
+    rotation="10 MB",
+    compression="zip",
 )
 
 
@@ -499,7 +505,8 @@ class Fight:
             all_hits_df = DataFrame(ANY_PROF_HITS)
             for element in self._magic_in:
                 self._hits_df = concat(
-                    [self._hits_df, all_hits_df[all_hits_df["code"] == int(element)]], ignore_index=True
+                    [self._hits_df, all_hits_df[all_hits_df["code"] == int(element)]],
+                    ignore_index=True,
                 )
 
         if self._hits_df.empty:

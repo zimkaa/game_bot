@@ -56,9 +56,9 @@ exclude = [
     ".python-version",
 ]
 max-complexity = 8
-extend-ignore = ["C812", "I201"]
+extend-ignore = ["I202"]
 per-file-ignores = """
-    */__init__.py: F401, I202
+    */__init__.py: F401
 """
 
 [tool.mypy]

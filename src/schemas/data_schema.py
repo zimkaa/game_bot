@@ -91,18 +91,34 @@ class QueryHit(Hit):
 class FightConfig(BaseModel):
     HP: bool = Field(default=True, title="Use HP", alias="hp")
     NEED_HP_PERCENT: float = Field(
-        default=1.0, title="HP coefficient to restore", alias="needHpPercent", ge=0.0, le=1.0
+        default=1.0,
+        title="HP coefficient to restore",
+        alias="needHpPercent",
+        ge=0.0,
+        le=1.0,
     )
 
     MP: bool = Field(default=True, title="Use MP", alias="mp")
     NEED_MP_PERCENT: float = Field(
-        default=0.4, title="MP coefficient to restore", alias="needMpPercent", ge=0.0, le=1.0
+        default=0.4,
+        title="MP coefficient to restore",
+        alias="needMpPercent",
+        ge=0.0,
+        le=1.0,
     )
     MP_NEED_INSIDE_BATTLE: int = Field(
-        default=500, title="Try to restore at least this amount of mana", alias="mpNeedInsideBattle", ge=0, le=29970
+        default=500,
+        title="Try to restore at least this amount of mana",
+        alias="mpNeedInsideBattle",
+        ge=0,
+        le=29970,
     )  # used to get need_mp
     NEED_MP_COUNT: int = Field(
-        default=500, title="Restore MP when least or equal this amount", alias="needMpCount", ge=0, le=29970
+        default=500,
+        title="Restore MP when least or equal this amount",
+        alias="needMpCount",
+        ge=0,
+        le=29970,
     )
 
     SCROLL: bool = Field(default=False, title="Use scroll like (The Rage Strike Scroll)", alias="scroll")
@@ -115,7 +131,11 @@ class FightConfig(BaseModel):
     STABLE_MAGIC_HIT: bool = Field(default=True, title="Use magical hit", alias="stableMagicHits")
     MP_HIT: int = Field(default=5, title="MP per hit", alias="mpHit", ge=5, le=500)
     MIN_MP_COEFFICIENT: float = Field(
-        default=0.3, title="Coefficient when stop used magic stable hits", alias="minMpCoefficient", ge=0.0, le=1.0
+        default=0.3,
+        title="Coefficient when stop used magic stable hits",
+        alias="minMpCoefficient",
+        ge=0.0,
+        le=1.0,
     )  # used for magic hits
 
 

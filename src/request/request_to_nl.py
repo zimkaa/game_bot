@@ -5,7 +5,7 @@ from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
 from loguru import logger
-import requests
+import requests  # noqa: I201
 
 from config import CHANNEL_ID  # noqa: I100
 from config import CHANNEL_ID_FRIENDS
@@ -102,12 +102,6 @@ class Connection:
             self.result = self.session.get(site_url, params=data)
             content = self.result.headers.get("Content-Type")
             if self.result.status_code == 200:
-                # standard_logger.warning(f"GOOOD and {data=} and {site_url=}")
-                # standard_logger.error(f"{NICKNAME} get_html something new {call_num=} {content=}")
-                # standard_logger.warning(f"{NICKNAME} {self.result.status_code=}")
-                # standard_logger.warning(f"{NICKNAME} {site_url=}")
-                # standard_logger.warning(f"{NICKNAME} {type(data)} {data=}")
-                # standard_logger.warning(f"{NICKNAME} {self.result.reason=}")
                 return self.result
             elif self.result.status_code == 502:
                 text = f"{NICKNAME} Error get_html {self.result.status_code}"
@@ -121,9 +115,7 @@ class Connection:
                 text = f"{NICKNAME} get_htmlError {self.result.status_code} {content=} {call_num=}"
                 standard_logger.error(text)
                 send_telegram(text)
-                standard_logger.warning(
-                    f"{NICKNAME} Retry GET query 546 {content=} {text=} and {data=} and {site_url=}"
-                )
+                standard_logger.warning(f"{NICKNAME} Retry GET query 546 {text=} and {data=} and {site_url=}")
                 logger.error(f"{NICKNAME} Retry GET query 546 {text=} and {data=} and {site_url=}")
                 standard_logger.error(f"{NICKNAME} get_html something new {call_num=} {content=}")
                 raise Exception(text)
@@ -170,11 +162,6 @@ class Connection:
             self.result = self.session.post(site_url, data=data)
             content = self.result.headers.get("Content-Type")
             if self.result.status_code == 200:
-                # standard_logger.warning(f"{NICKNAME} {self.result.status_code=}")
-                # standard_logger.warning(f"{NICKNAME} {site_url=}")
-                # standard_logger.warning(f"{NICKNAME} {self.result.text=}")
-                # standard_logger.warning(f"{NICKNAME} {self.result.headers=}")
-                # standard_logger.warning(f"{NICKNAME} {self.result.request.body=}")
                 return self.result
             elif self.result.status_code == 502:
                 text = f"{NICKNAME} post_html Error {self.result.status_code=} {content=}"

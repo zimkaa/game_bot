@@ -1,4 +1,5 @@
 from loguru import logger
+
 import sentry_sdk
 
 from config import NICKNAME  # noqa: I100
@@ -60,7 +61,11 @@ def main():
     person_location = PersonLocation(connect=connect)
     person_chat = PersonChat(connect=connect)
     game = Game(
-        fight=fight, connect=connect, person_location=person_location, person_chat=person_chat, nickname=NICKNAME
+        fight=fight,
+        connect=connect,
+        person_location=person_location,
+        person_chat=person_chat,
+        nickname=NICKNAME,
     )
 
     logger.success("\n\nGame start!!!\n")
