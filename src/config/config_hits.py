@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 
-from buffs import AIR_BARRIER
+from buffs import AIR_BARRIER  # noqa: I100
 from buffs import BOUNTY_OF_LIGHTNING
 from buffs import FIRE_SHIELD
 from buffs import FLAMING_RACK

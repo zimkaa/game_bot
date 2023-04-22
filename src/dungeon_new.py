@@ -3,34 +3,35 @@ import time
 
 from loguru import logger
 
-from config import FIND_USE_ITEM_PART1
-from config import FIND_USE_ITEM_PART2
+from config import COUNT_ITER  # noqa: I100
 from config import FIND_ERROR
 from config import FIND_FEXP
-from config import FIND_PARAM_OW
 from config import FIND_FIGHT
-from config import URL_MAIN
+from config import FIND_PARAM_OW
+from config import FIND_USE_ITEM_PART1
+from config import FIND_USE_ITEM_PART2
 from config import NICKNAME
 from config import START_HP
-from config import START_MP
-from config import COUNT_ITER
 from config import START_ITER
-
-from fight import Fight
-
-from request import Connection
-from request import send_telegram
-
-from person_location import PersonLocation
-from person_location import Location
-from person_chat import PersonChat
-
-from helpers import timing_decorator
+from config import START_MP
+from config import URL_MAIN
 
 from elixir import Elixir
 
 from enemy import Summon
 from enemy import SummonBotType
+
+from fight import Fight
+
+from helpers import timing_decorator
+
+from person_chat import PersonChat
+
+from person_location import Location
+from person_location import PersonLocation
+
+from request import Connection
+from request import send_telegram
 
 
 def check_iter(fight_iteration: int, start_time: float) -> float:
@@ -93,7 +94,7 @@ class Game:
             param_ow = new_result.replace("]", "").replace('"', "").replace("[", "").split(",")
             if param_ow:
                 hp = param_ow[1]
-                if self._is_alive(hp):
+                if not self._is_alive(hp):
                     self._raise_error()
 
     def _is_alive(self, hp: str) -> bool:
@@ -293,19 +294,20 @@ class Game:
     def ab_while(self) -> None:
         """Start while"""
         while True:
-            logger.warning(f"{self._iter_number=}")
-            if self._iter_number == COUNT_ITER:
+            if self._iter_number > COUNT_ITER:
                 break
+            logger.warning(f"{self._iter_number=}")
 
             if self._person_location.location == Location.FIGHT:
                 self._run_fight()
             self._change_location(Location.ELIXIR)
 
             if self._my_hp < START_HP or self._my_mp < START_MP:
-                self._use(item=Elixir.HEAL.value)
+                self._use(item=Elixir.ELIXIR_OF_RESTORATION.value)
 
             self._retry = 0
-            bot_type = SummonBotType(first_item=Summon.PLANAR, second_item=Summon.BAIT)
+            # bot_type = SummonBotType(first_item=Summon.PLANAR, second_item=Summon.BAIT)
+            bot_type = SummonBotType(first_item=Summon.BAIT, second_item=Summon.BAIT)
             self._summon_bot(bot_type)
 
             if self._iter_number % 50 == 0:

@@ -1,7 +1,8 @@
 from decimal import Decimal
-import attr
 from typing import List
 from typing import Union
+
+import attr
 
 from pydantic import BaseModel
 from pydantic import Field

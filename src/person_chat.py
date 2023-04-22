@@ -3,7 +3,7 @@ import re
 
 from loguru import logger
 
-from config import FIND_CHAT
+from config import FIND_CHAT  # noqa: I100
 from config import FIND_MESSAGE_FOR_PERSON
 from config import FIND_MESSAGE_TEXT
 from config import FIND_SENDER_NAME

@@ -1,3 +1,11 @@
+from .config_heal import DICT_NAME_BOOST_MP
+from .config_heal import MP_LIST_MP
+
+from .config_hits import ANY_PROF_HITS
+from .config_hits import HIT_SCROLLS
+from .config_hits import KICK_MAG
+from .config_hits import KICK_WARRIOR
+
 from .local_config import CHANNEL_ID
 from .local_config import CHANNEL_ID_FRIENDS
 from .local_config import CHANNEL_ID_LEADER
@@ -21,17 +29,6 @@ from .local_config import START_ITER
 from .local_config import START_MP
 from .local_config import TG_TOKEN
 
-from .urls import URL
-from .urls import URL_GAME
-from .urls import URL_KEEP_CONNECTION
-from .urls import URL_MAIN
-
-from .variable_names import LEADER
-from .variable_names import MAG
-from .variable_names import SLAVE
-from .variable_names import SOLO
-from .variable_names import WARRIOR
-
 from .pattern import FIND_CHAT
 from .pattern import FIND_DISABLED
 from .pattern import FIND_ERROR
@@ -51,10 +48,13 @@ from .pattern import FIND_SENDER_NAME
 from .pattern import FIND_USE_ITEM_PART1
 from .pattern import FIND_USE_ITEM_PART2
 
-from .config_heal import DICT_NAME_BOOST_MP
-from .config_heal import MP_LIST_MP
+from .urls import URL
+from .urls import URL_GAME
+from .urls import URL_KEEP_CONNECTION
+from .urls import URL_MAIN
 
-from .config_hits import ANY_PROF_HITS
-from .config_hits import HIT_SCROLLS
-from .config_hits import KICK_MAG
-from .config_hits import KICK_WARRIOR
+from .variable_names import LEADER
+from .variable_names import MAG
+from .variable_names import SLAVE
+from .variable_names import SOLO
+from .variable_names import WARRIOR

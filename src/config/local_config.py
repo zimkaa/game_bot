@@ -9,11 +9,11 @@ from .variable_names import SOLO
 load_dotenv()
 
 
-START_HP = 5_000
+START_HP = 2_000
 
-START_MP = 8_000
+START_MP = 5_000
 
-COUNT_ITER = 300
+COUNT_ITER = 3
 
 START_ITER = 1
 

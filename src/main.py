@@ -1,21 +1,29 @@
 from loguru import logger
+import sentry_sdk
 
-from config import NICKNAME
+from config import NICKNAME  # noqa: I100
 from config import PROXIES
 from config import PROXY
 from config import PROXY_IP
 
 from dungeon_new import Game
 
-from person_location import PersonLocation
+from fight import Fight
 
 from person_chat import PersonChat
 
-from fight import Fight
+from person_location import PersonLocation
 
 from request import Connection
 from request import my_ip
 from request import send_telegram
+
+
+sentry_sdk.init(
+    dsn="https://ac8aa8ca81124c569460f52305402573@o4505058793095168.ingest.sentry.io/4505058802597888",
+    traces_sample_rate=1.0,
+    environment="production",
+)
 
 
 def get_current_ip() -> str:
@@ -42,7 +50,7 @@ def check_ip():
         raise Exception("Wrong IP")
 
 
-@logger.catch
+# @logger.catch
 def main():
 
     check_ip()
@@ -69,5 +77,6 @@ if __name__ == "__main__":
         main()
     except Exception as error:
         text = f"{NICKNAME} - trouble!!!"
+        sentry_sdk.capture_exception(error=error)
         logger.error(error)
         send_telegram(text)

@@ -4,12 +4,11 @@ import re
 from pathlib import Path
 from typing import Any
 
+from loguru import logger
 from pandas import DataFrame
 from pandas import concat
 
-from loguru import logger
-
-from config import ANY_PROF_HITS
+from config import ANY_PROF_HITS  # noqa: I100
 from config import DICT_NAME_BOOST_MP
 from config import FIND_FIGHT_VARIABLES_PART1
 from config import FIND_FIGHT_VARIABLES_PART2
@@ -76,15 +75,15 @@ class Fight:
     def _prepare_data(self) -> None:
         """Creating self attributes"""
         name_list = (
-            "fight_ty",
-            "param_ow",
-            "lives_g1",
-            "lives_g2",
-            "alchemy",
-            "magic_in",
-            "param_en",
-            "fight_pm",
-            "logs",
+            "_fight_ty",
+            "_param_ow",
+            "_lives_g1",
+            "_lives_g2",
+            "_alchemy",
+            "_magic_in",
+            "_param_en",
+            "_fight_pm",
+            "_logs",
         )
         for attribute_name in name_list:
             data = self._find_value(attribute_name)
@@ -93,25 +92,30 @@ class Fight:
 
     def _find_value(self, value: str) -> list[str] | list[Any]:
         """Finder"""
-        if value == "lives_g2":
+        find_value = value[1:]
+        if find_value == "lives_g2":
             pattern = FIND_LIVES_G2
         else:
-            pattern = FIND_FIGHT_VARIABLES_PART1 + value + FIND_FIGHT_VARIABLES_PART2
+            pattern = FIND_FIGHT_VARIABLES_PART1 + find_value + FIND_FIGHT_VARIABLES_PART2
         result: list[str] = re.findall(pattern, self._page_text)
         if result:
-            if value == "logs":
+            if find_value == "logs":
                 new_res = result[0].replace(",,", ',"was empty in log",')
                 new_res2 = f"[{new_res}]"
                 return eval(new_res2)
             result_value: list[str] = result[0].replace("]", "").replace('"', "").replace("[", "").split(",")
             return result_value
 
+        if find_value == "alchemy":
+            logger.debug("alchemy empty Потому что только часть атрибутов доступна")
+            return []
+
         logger.debug(f"{type(self._page_text)}")
-        logger.debug(f"{value=} {result=}")
-        text = f"{self._nickname} Trouble {value=} {result=}"
+        logger.debug(f"{find_value=} {result=}")
+        text = f"{self._nickname} Trouble {find_value=} {result=}"
         logger.error(text)
         send_telegram(text)
-        return []
+        raise
 
     def _get_self_info(self) -> None:
         """Create info about person"""

@@ -1,24 +1,24 @@
+import logging
 import os
 from datetime import datetime
-from pathlib import Path
-import logging
 from logging.handlers import RotatingFileHandler
+from pathlib import Path
 
-import requests
 from loguru import logger
+import requests
 
-from config.urls import URL
-from config.urls import URL_MAIN
-from config.urls import URL_GAME
-from config.local_config import CHANNEL_ID
-from config.local_config import CHECKER_IP_SITE
-from config.local_config import TG_TOKEN
-from config.local_config import HEADER
-from config.local_config import PROXIES
-from config.local_config import DATA
-from config.local_config import CHANNEL_ID_FRIENDS
-from config.local_config import CHANNEL_ID_LEADER
-from config.local_config import NICKNAME
+from config import CHANNEL_ID  # noqa: I100
+from config import CHANNEL_ID_FRIENDS
+from config import CHANNEL_ID_LEADER
+from config import CHECKER_IP_SITE
+from config import DATA
+from config import HEADER
+from config import NICKNAME
+from config import PROXIES
+from config import TG_TOKEN
+from config import URL
+from config import URL_GAME
+from config import URL_MAIN
 
 
 logging.basicConfig(
@@ -29,9 +29,6 @@ logging.basicConfig(
 standard_logger = logging.getLogger("request_to_nl")
 
 logging.getLogger("urllib3").setLevel("WARNING")
-
-for key in logging.Logger.manager.loggerDict:
-    standard_logger.debug(f"{key=}")
 
 
 class Connection:
@@ -98,14 +95,6 @@ class Connection:
             if call_num >= 3:
                 content = self.result.headers.get("Content-Type")
                 standard_logger.error(f"get_html {NICKNAME} call_num >= 3 {call_num=} {content=}")
-                standard_logger.warning(f"{NICKNAME} {self.result.status_code=}")
-                standard_logger.warning(f"{NICKNAME} {site_url=}")
-                standard_logger.warning(f"{NICKNAME} {type(data)} {data=}")
-                standard_logger.warning(f"{NICKNAME} {self.result.text=}")
-                standard_logger.warning(f"{NICKNAME} {self.result.content=}")
-                standard_logger.warning(f"{NICKNAME} {self.result.headers=}")
-                standard_logger.warning(f"{NICKNAME} {self.result.reason=}")
-                standard_logger.warning(f"{NICKNAME} {self.result.request.body=}")
                 text = f"{NICKNAME}----get_html--error code: {self.result.status_code}"
                 logger.error(f"{text=}")
                 send_telegram(text)
@@ -113,12 +102,12 @@ class Connection:
             self.result = self.session.get(site_url, params=data)
             content = self.result.headers.get("Content-Type")
             if self.result.status_code == 200:
-                standard_logger.warning(f"GOOOD and {data=} and {site_url=}")
-                standard_logger.error(f"{NICKNAME} get_html something new {call_num=} {content=}")
-                standard_logger.warning(f"{NICKNAME} {self.result.status_code=}")
-                standard_logger.warning(f"{NICKNAME} {site_url=}")
-                standard_logger.warning(f"{NICKNAME} {type(data)} {data=}")
-                standard_logger.warning(f"{NICKNAME} {self.result.reason=}")
+                # standard_logger.warning(f"GOOOD and {data=} and {site_url=}")
+                # standard_logger.error(f"{NICKNAME} get_html something new {call_num=} {content=}")
+                # standard_logger.warning(f"{NICKNAME} {self.result.status_code=}")
+                # standard_logger.warning(f"{NICKNAME} {site_url=}")
+                # standard_logger.warning(f"{NICKNAME} {type(data)} {data=}")
+                # standard_logger.warning(f"{NICKNAME} {self.result.reason=}")
                 return self.result
             elif self.result.status_code == 502:
                 text = f"{NICKNAME} Error get_html {self.result.status_code}"
@@ -126,14 +115,6 @@ class Connection:
                 logger.error(f"Retry GET query 502 {text=} and {data=} and {site_url=}")
                 standard_logger.warning(f"Retry GET query 502 {text=} and {data=} and {site_url=}")
                 standard_logger.error(f"{NICKNAME} get_html something new {call_num=} {content=}")
-                standard_logger.warning(f"{NICKNAME} {self.result.status_code=}")
-                standard_logger.warning(f"{NICKNAME} {site_url=}")
-                standard_logger.warning(f"{NICKNAME} {type(data)} {data=}")
-                standard_logger.warning(f"{NICKNAME} {self.result.text=}")
-                standard_logger.warning(f"{NICKNAME} {self.result.content=}")
-                standard_logger.warning(f"{NICKNAME} {self.result.headers=}")
-                standard_logger.warning(f"{NICKNAME} {self.result.reason=}")
-                standard_logger.warning(f"{NICKNAME} {self.result.request.body=}")
                 raise Exception(text)
             elif self.result.status_code == 546:
                 standard_logger.debug(f"{site_url=}")
@@ -145,33 +126,25 @@ class Connection:
                 )
                 logger.error(f"{NICKNAME} Retry GET query 546 {text=} and {data=} and {site_url=}")
                 standard_logger.error(f"{NICKNAME} get_html something new {call_num=} {content=}")
-                standard_logger.warning(f"{NICKNAME} {self.result.status_code=}")
-                standard_logger.warning(f"{NICKNAME} {site_url=}")
-                standard_logger.warning(f"{NICKNAME} {type(data)} {data=}")
-                standard_logger.warning(f"{NICKNAME} {self.result.text=}")
-                standard_logger.warning(f"{NICKNAME} {self.result.content=}")
-                standard_logger.warning(f"{NICKNAME} {self.result.headers=}")
-                standard_logger.warning(f"{NICKNAME} {self.result.reason=}")
-                standard_logger.warning(f"{NICKNAME} {self.result.request.body=}")
                 raise Exception(text)
             else:
                 text = f"{NICKNAME} ---get_html--error code: {self.result.status_code}"
                 send_telegram(text)
                 standard_logger.error(f"{NICKNAME} get_html something new {call_num=} {content=}")
-                standard_logger.warning(f"{NICKNAME} {self.result.status_code=}")
-                standard_logger.warning(f"{NICKNAME} {site_url=}")
-                standard_logger.warning(f"{NICKNAME} {type(data)} {data=}")
-                standard_logger.warning(f"{NICKNAME} {self.result.text=}")
-                standard_logger.warning(f"{NICKNAME} {self.result.content=}")
-                standard_logger.warning(f"{NICKNAME} {self.result.headers=}")
-                standard_logger.warning(f"{NICKNAME} {self.result.reason=}")
-                standard_logger.warning(f"{NICKNAME} {self.result.request.body=}")
                 raise Exception(text)
 
         try:
             _retry(data)
             return self.result
         except Exception as error:
+            standard_logger.warning(f"{NICKNAME} {self.result.status_code=}")
+            standard_logger.warning(f"{NICKNAME} {site_url=}")
+            standard_logger.warning(f"{NICKNAME} {type(data)} {data=}")
+            standard_logger.warning(f"{NICKNAME} {self.result.text=}")
+            standard_logger.warning(f"{NICKNAME} {self.result.content=}")
+            standard_logger.warning(f"{NICKNAME} {self.result.headers=}")
+            standard_logger.warning(f"{NICKNAME} {self.result.reason=}")
+            standard_logger.warning(f"{NICKNAME} {self.result.request.body=}")
             text = f"{NICKNAME} get_html something new {error=}"
             logger.error(text)
             send_telegram(text)
@@ -190,39 +163,22 @@ class Connection:
             if call_num >= 3:
                 content = self.result.headers.get("Content-Type")
                 standard_logger.debug(f"{NICKNAME} post_html call_num >= 3 {call_num=} {content=}")
-                standard_logger.critical(f"{NICKNAME} {self.result.status_code=}")
-                standard_logger.critical(f"{NICKNAME} {site_url=}")
-                standard_logger.critical(f"{NICKNAME} {type(data)} {data=}")
-                standard_logger.critical(f"{NICKNAME} {self.result.text=}")
-                standard_logger.critical(f"{NICKNAME} {self.result.content=}")
-                standard_logger.critical(f"{NICKNAME} {self.result.headers=}")
-                standard_logger.critical(f"{NICKNAME} {self.result.reason=}")
-                standard_logger.critical(f"{NICKNAME} {self.result.request.body=}")
                 text = f"{NICKNAME}---post_html--error code: {self.result.status_code}"
                 logger.error(f"{text=}")
                 send_telegram(text)
                 raise Exception(text)
             self.result = self.session.post(site_url, data=data)
             content = self.result.headers.get("Content-Type")
-            standard_logger.warning(f"{NICKNAME} {self.result.status_code=}")
-            standard_logger.warning(f"{NICKNAME} {site_url=}")
-            standard_logger.warning(f"{NICKNAME} {self.result.text=}")
-            standard_logger.warning(f"{NICKNAME} {self.result.headers=}")
-            standard_logger.warning(f"{NICKNAME} {self.result.reason=}")
-            standard_logger.warning(f"{NICKNAME} {self.result.request.body=}")
             if self.result.status_code == 200:
+                # standard_logger.warning(f"{NICKNAME} {self.result.status_code=}")
+                # standard_logger.warning(f"{NICKNAME} {site_url=}")
+                # standard_logger.warning(f"{NICKNAME} {self.result.text=}")
+                # standard_logger.warning(f"{NICKNAME} {self.result.headers=}")
+                # standard_logger.warning(f"{NICKNAME} {self.result.request.body=}")
                 return self.result
             elif self.result.status_code == 502:
                 text = f"{NICKNAME} post_html Error {self.result.status_code=} {content=}"
                 standard_logger.error(f"{NICKNAME} Retry POST query 502 {data=} and {site_url=}")
-                standard_logger.warning(f"{NICKNAME} post_502 {self.result.status_code=}")
-                standard_logger.warning(f"{NICKNAME} post_502 {site_url=}")
-                standard_logger.warning(f"{NICKNAME} post_502 {type(data)} {data=}")
-                standard_logger.warning(f"{NICKNAME} post_502 {self.result.text=}")
-                standard_logger.warning(f"{NICKNAME} post_502 {self.result.content=}")
-                standard_logger.warning(f"{NICKNAME} post_502 {self.result.headers=}")
-                standard_logger.warning(f"{NICKNAME} post_502 {self.result.reason=}")
-                standard_logger.warning(f"{NICKNAME} post_502 {self.result.request.body=}")
                 send_telegram(text)
                 logger.error(f"{NICKNAME} Retry POST query 502 {data=} and {site_url=}")
                 raise Exception(text)
@@ -230,21 +186,21 @@ class Connection:
                 text = f"{NICKNAME} ---post_html--error code: {self.result.status_code=}  {content=}"
                 send_telegram(text)
                 standard_logger.error(f"post_html something new  {call_num=}")
-                standard_logger.warning(f"{NICKNAME} post_{self.result.status_code} {self.result.status_code=}")
-                standard_logger.warning(f"{NICKNAME} post_{self.result.status_code} {site_url=}")
-                standard_logger.warning(f"{NICKNAME} post_{self.result.status_code} {type(data)} {data=}")
-                standard_logger.warning(f"{NICKNAME} post_{self.result.status_code} {self.result.text=}")
-                standard_logger.warning(f"{NICKNAME} post_{self.result.status_code} {self.result.content=}")
-                standard_logger.warning(f"{NICKNAME} post_{self.result.status_code} {self.result.headers=}")
-                standard_logger.warning(f"{NICKNAME} post_{self.result.status_code} {self.result.reason=}")
-                standard_logger.warning(f"{NICKNAME} post_{self.result.status_code} {self.result.request.body=}")
                 raise Exception(text)
 
         try:
             _retry(data)
             return self.result
-        except Exception:
-            text = "{NICKNAME} post_html something new ----REQUEST!!!!!----"
+        except Exception as error:
+            standard_logger.warning(f"{NICKNAME} {self.result.status_code=}")
+            standard_logger.warning(f"{NICKNAME} {site_url=}")
+            standard_logger.warning(f"{NICKNAME} {type(data)} {data=}")
+            standard_logger.warning(f"{NICKNAME} {self.result.text=}")
+            standard_logger.warning(f"{NICKNAME} {self.result.content=}")
+            standard_logger.warning(f"{NICKNAME} {self.result.headers=}")
+            standard_logger.warning(f"{NICKNAME} {self.result.reason=}")
+            standard_logger.warning(f"{NICKNAME} {self.result.request.body=}")
+            text = f"{NICKNAME} post_html something new -{error=}"
             logger.error(text)
             send_telegram(text)
             raise Exception(text)
