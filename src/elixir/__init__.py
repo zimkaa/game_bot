@@ -1,1 +1,1 @@
-from elixir import Elixir
+from .elixir import Elixir
