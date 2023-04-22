@@ -1,5 +1,3 @@
-from dataclasses import dataclass
-
 from .bot_names import ARCHI_LICH
 from .bot_names import ARCHI_PALADIN_MORTIUS
 from .bot_names import FOREST_KEEPER
@@ -51,8 +49,3 @@ DUNGEON_BOTS = [
 DUNGEON_BOSSES = DUNGEON_WARRIOR_BOSSES + DUNGEON_MAG_BOSSES
 
 DUNGEON_BOSSES_AND_BOTS = DUNGEON_BOSSES + DUNGEON_BOTS
-
-
-@dataclass
-class Boss:
-    name: str
