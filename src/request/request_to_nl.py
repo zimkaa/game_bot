@@ -2,10 +2,10 @@ import os
 from datetime import datetime
 from pathlib import Path
 import logging
+from logging.handlers import RotatingFileHandler
 
 import requests
 from loguru import logger
-from logging.handlers import RotatingFileHandler
 
 from config.urls import URL
 from config.urls import URL_MAIN
@@ -28,10 +28,6 @@ logging.basicConfig(
 )
 standard_logger = logging.getLogger("request_to_nl")
 
-# standard_logger.setLevel(logging.DEBUG)
-# handler=[RotatingFileHandler("request.log", maxBytes=5_242_880, backupCount=10)]
-# standard_logger.addHandler(handler)
-
 logging.getLogger("urllib3").setLevel("WARNING")
 
 for key in logging.Logger.manager.loggerDict:
@@ -40,7 +36,7 @@ for key in logging.Logger.manager.loggerDict:
 
 class Connection:
     def __init__(self, proxy: bool = False) -> None:
-        self.result = None
+        self.result: requests.models.Response
         self._set_session(proxy)
         self._log_in()
 
@@ -64,7 +60,6 @@ class Connection:
         file_name = f"{now}_{reason}"
         file_path = os.path.join(dir_path, "files", f"{file_name}.txt")
 
-        # with open(file_path, "w", encoding="cp1251") as file:
         with open(file_path, "w") as file:
             file.write(text)
 
@@ -99,9 +94,9 @@ class Connection:
         def _retry(data):
             nonlocal call_num
             call_num += 1
-            content = self.result.headers.get("Content-Type") if self.result else None
-            standard_logger.debug(f"get_html {NICKNAME} {content=} request send {call_num=} times {data=} {site_url=}")
+            standard_logger.debug(f"get_html {NICKNAME} request send {call_num=} times {data=} {site_url=}")
             if call_num >= 3:
+                content = self.result.headers.get("Content-Type")
                 standard_logger.error(f"get_html {NICKNAME} call_num >= 3 {call_num=} {content=}")
                 standard_logger.warning(f"{NICKNAME} {self.result.status_code=}")
                 standard_logger.warning(f"{NICKNAME} {site_url=}")
@@ -116,6 +111,7 @@ class Connection:
                 send_telegram(text)
                 raise Exception(text)
             self.result = self.session.get(site_url, params=data)
+            content = self.result.headers.get("Content-Type")
             if self.result.status_code == 200:
                 standard_logger.warning(f"GOOOD and {data=} and {site_url=}")
                 standard_logger.error(f"{NICKNAME} get_html something new {call_num=} {content=}")
@@ -176,8 +172,9 @@ class Connection:
             _retry(data)
             return self.result
         except Exception as error:
-            logger.error(f"get_html something new {error=}")
-            text = "----REQUEST!!!!!----"
+            text = f"{NICKNAME} get_html something new {error=}"
+            logger.error(text)
+            send_telegram(text)
             raise Exception(text)
 
     def post_html(self, site_url: str, data: dict = None) -> requests.models.Response:
@@ -189,9 +186,9 @@ class Connection:
         def _retry(data):
             nonlocal call_num
             call_num += 1
-            content = self.result.headers.get("Content-Type") if self.result else None
-            standard_logger.debug(f"{NICKNAME} post_html {content=} request send {call_num=} times {data=} {site_url=}")
+            standard_logger.debug(f"{NICKNAME} post_html request send {call_num=} times {data=} {site_url=}")
             if call_num >= 3:
+                content = self.result.headers.get("Content-Type")
                 standard_logger.debug(f"{NICKNAME} post_html call_num >= 3 {call_num=} {content=}")
                 standard_logger.critical(f"{NICKNAME} {self.result.status_code=}")
                 standard_logger.critical(f"{NICKNAME} {site_url=}")
@@ -206,6 +203,7 @@ class Connection:
                 send_telegram(text)
                 raise Exception(text)
             self.result = self.session.post(site_url, data=data)
+            content = self.result.headers.get("Content-Type")
             standard_logger.warning(f"{NICKNAME} {self.result.status_code=}")
             standard_logger.warning(f"{NICKNAME} {site_url=}")
             standard_logger.warning(f"{NICKNAME} {self.result.text=}")
@@ -246,7 +244,9 @@ class Connection:
             _retry(data)
             return self.result
         except Exception:
-            text = "----REQUEST!!!!!----"
+            text = "{NICKNAME} post_html something new ----REQUEST!!!!!----"
+            logger.error(text)
+            send_telegram(text)
             raise Exception(text)
 
 
@@ -283,7 +283,7 @@ def send_telegram(text: str) -> None:
 
 def my_ip(proxies: dict = None) -> str:
     """
-    Get IP (need to check proxy)
+    Do request to get IP (need to check proxy)
     """
     answer = requests.get(CHECKER_IP_SITE, headers=HEADER, proxies=proxies)  # type: ignore
     if answer.status_code != 200:
