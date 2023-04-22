@@ -1,52 +1,36 @@
-import random
 import re
 import time
 
 from loguru import logger
 
-from config import FIND_IN_CITY
+from config import FIND_USE_ITEM_PART1
+from config import FIND_USE_ITEM_PART2
+from config import FIND_ERROR
 from config import FIND_FEXP
 from config import FIND_PARAM_OW
-from config import FIND_PAGE_INVENTORY
-from config import FIND_FROM_NATURE_TO_INV
-
+from config import FIND_FIGHT
 from config import URL_MAIN
-from config import URL_KEEP_CONNECTION
-
 from config import NICKNAME
+from config import START_HP
+from config import START_MP
+from config import COUNT_ITER
+from config import START_ITER
 
 from fight import Fight
-
-from my_errors import FirstError
 
 from request import Connection
 from request import send_telegram
 
-from location import Location
+from person_location import PersonLocation
+from person_location import Location
+from person_chat import PersonChat
 
+from helpers import timing_decorator
 
-HEAL = "101"  # "элексир восстановления"
+from elixir import Elixir
 
-PLANAR = "152"  # планар
-
-BAIT = "102"  # Приманку Для Ботов
-
-START_HP = 5_000
-
-START_MP = 8_000
-
-
-def timing_decorator(func):
-    def wrapper(*args, **kwargs):
-        logger.critical(f"{func.__name__=}")
-        logger.debug(f"{kwargs=}")
-        start_time = time.perf_counter()
-        result = func(*args, **kwargs)
-        end_time = time.perf_counter()
-        logger.critical(f"timing_decorator {func.__name__=} - {end_time - start_time:.5f} seconds")
-        return result
-
-    return wrapper
+from enemy import Summon
+from enemy import SummonBotType
 
 
 def check_iter(fight_iteration: int, start_time: float) -> float:
@@ -70,9 +54,20 @@ def check_iter(fight_iteration: int, start_time: float) -> float:
 
 
 class Game:
-    def __init__(self, fight: Fight, connect: Connection) -> None:
-        self.fight_class = fight
-        self.connect = connect
+    def __init__(
+        self,
+        *,
+        fight: Fight,
+        connect: Connection,
+        person_location: PersonLocation,
+        person_chat: PersonChat,
+        nickname: str,
+    ) -> None:
+        self._fight_class = fight
+        self._connect = connect
+        self._person_location = person_location
+        self._person_chat = person_chat
+        self._nickname = nickname
 
         self._init_variables()
 
@@ -80,47 +75,48 @@ class Game:
 
     def _init_variables(self) -> None:
         """Init variables"""
-        self.iter_number: int = 1
-        self.my_hp: int = START_HP
-        self.my_mp: int = START_MP
-        self.nickname: str = NICKNAME
-        self.end_battle: list[str | None] = list()
-        self.prepare: list
+        self._iter_number: int = START_ITER
+        self._my_hp: int = START_HP
+        self._my_mp: int = START_MP
+        self._my_od: int = 0
+        self._inu: str = ""
+        self._inb: str = ""
+        self._ina: str = ""
+        self._continue_fight: bool = False
+        self._end_battle: list[str] = list()
 
-    def _find_pattern(self, pattern: str, search_string: str = None) -> list[str | None]:
-        """Find from pattern
-
-        :param pattern: pattern
-        :type pattern: str
-        :param search_string: search string, defaults to None
-        :type search_string: str, optional
-        :return: result
-        :rtype: list[str | None]
-        """
-        if search_string:
-            return re.findall(pattern, search_string)
-        return re.findall(pattern, self.connect.get_html_page_text())
-
-    def _is_alive(self) -> None:
+    def _check_alive(self) -> None:
         """Check live status in battle"""
-        result = self._find_pattern(FIND_PARAM_OW)
+        result: list[str] = re.findall(FIND_PARAM_OW, self._connect.get_html_page_text())
         if result:
-            self._raise_error(result)
+            new_result = result.pop()
+            param_ow = new_result.replace("]", "").replace('"', "").replace("[", "").split(",")
+            if param_ow:
+                hp = param_ow[1]
+                if self._is_alive(hp):
+                    self._raise_error()
 
-    def _raise_error(self, result: list[str]) -> None:
+    def _is_alive(self, hp: str) -> bool:
+        """is alive
+
+        :param hp: my hp
+        :type param_ow: str
+        :return: true or false
+        :rtype: bool
+        """
+        if hp == "0":
+            return False
+        return True
+
+    def _raise_error(self) -> None:
         """Raise dead in battle
 
-        :param result: list with params in one string
-        :type result: list[str]
         :raises Exception: Trouble need check logs
         """
-        new_result = result.pop()
-        param_ow = new_result.replace("]", "").replace('"', "").replace("[", "").split(",")
-        if param_ow[1] == "0":
-            text_for_message = f"{NICKNAME} YOU KILLED BUT FIGHT NOT ENDED"
-            logger.error(text_for_message)
-            send_telegram(text_for_message)
-            raise Exception(text_for_message)
+        text_for_message = f"{self._nickname} YOU KILLED BUT FIGHT NOT ENDED"
+        logger.error(text_for_message)
+        send_telegram(text_for_message)
+        raise Exception(text_for_message)
 
     def _prepare_data_end_battle(self, fexp: list[str]) -> dict[str, str]:
         """Prepare data to end battle in battle
@@ -130,7 +126,7 @@ class Game:
         :return: query data
         :rtype: dict[str, str]
         """
-        text_for_message = f"{NICKNAME} END BATTLE"
+        text_for_message = f"{self._nickname} END BATTLE"
         logger.info(text_for_message)
         return {
             "get_id": "61",
@@ -153,8 +149,8 @@ class Game:
         :return: is end battle
         :rtype: bool
         """
-        self.end_battle = self._find_pattern(FIND_FEXP)
-        if self.end_battle:
+        self._end_battle = re.findall(FIND_FEXP, self._connect.get_html_page_text())
+        if self._end_battle:
             return True
         return False
 
@@ -164,34 +160,36 @@ class Game:
         :return: query data
         :rtype: dict[str, str]
         """
-        new_result: str = self.end_battle.pop()
+        new_result: str = self._end_battle.pop()
         fexp: list[str] = new_result.replace("]", "").replace('"', "").replace("[", "").split(",")
         return self._prepare_data_end_battle(fexp)
 
+    def _write_log(self) -> None:
+        """Write log to console"""
+        part1 = f"inu-{self._inu} inb-{self._inb} ina-{self._ina}"
+        part2 = f" my_od-{self._my_od} my_mp-{self._my_mp}"
+        part3 = f" my_hp-{self._my_hp}"
+        text = part1 + part2 + part3
+        logger.debug(text)
+
     def _logic(self) -> dict[str, str]:
-        """Get HP/MP create query data
+        """Get data to do request
 
         :return: query data
         :rtype: dict[str, str]
         """
-        my_od, my_mp, my_hp = self.fight_class.get_state()
-        self.my_hp = my_hp
-        self.my_mp = my_mp
+        self._my_od, self._my_mp, self._my_hp = self._fight_class.get_state()
 
-        self.fight_class.fight()
-        data = self.fight_class.get_queries_param()
-        inu = data.inu
-        inb = data.inb
-        ina = data.ina
+        self._fight_class.fight()
+        data = self._fight_class.get_queries_param()
+        self._inu = data.inu
+        self._inb = data.inb
+        self._ina = data.ina
 
-        part1 = f"inu-{inu} inb-{inb} ina-{ina}"
-        part2 = f" my_od-{my_od} my_mp-{my_mp}"
-        part3 = f" my_hp-{my_hp}"
-        text = part1 + part2 + part3
-        logger.debug(text)
-        return self.fight_class.get_data()
+        self._write_log()
+        return self._fight_class.get_data()
 
-    def _parse_fight(self, fight_iteration: int) -> dict[str, str]:
+    def _create_fight_data(self) -> dict[str, str]:
         """Parse FIGHT
 
         :param fight_iteration: number of moves
@@ -199,35 +197,30 @@ class Game:
         :return: data to request
         :rtype: dict[str, str]
         """
-        self._is_alive()
+        self._check_alive()
         if self._is_end_battle():
             return self._create_end_battle_data()
 
-        self.fight_class.setup_value(self.connect.get_html_page_text(), fight_iteration)
+        self._fight_class.setup_value(self._connect.get_html_page_text())
 
-        data = self._logic()
-        return data
+        return self._logic()
 
-    def _stop_or_hit(self, fight_iteration: int) -> None:
+    def _stop_or_hit(self) -> None:
         """Check stop battle
 
         :param fight_iteration: number of moves
         :type fight_iteration: int
         """
-        data = self._parse_fight(fight_iteration)
+        data = self._create_fight_data()
         if "post_id" in data.keys():
-            # This is hit!
-            self.connect.post_html(URL_MAIN, data)
-            self.continue_fight = True
+            self._connect.post_html(URL_MAIN, data)
         elif "retry" in data.keys():
             logger.debug("retry")
-            self.connect.get_html(URL_MAIN)
-            self.continue_fight = True
+            self._connect.get_html(URL_MAIN)
         else:
-            # This is end of battle
-            logger.info("Get a request for the end battle")
-            self.connect.get_html(URL_MAIN, data)
-            self.continue_fight = False
+            logger.info("Request for the end battle")
+            self._connect.get_html(URL_MAIN, data)
+            self._continue_fight = False
 
     def _is_error(self) -> bool:
         """Check error
@@ -235,8 +228,7 @@ class Game:
         :return: is error
         :rtype: bool
         """
-        pattern = r"error.css"
-        error = self._find_pattern(pattern)
+        error = re.findall(FIND_ERROR, self._connect.get_html_page_text())
         if error:
             return True
         return False
@@ -245,80 +237,29 @@ class Game:
         """Relogin"""
         logger.trace("\nNEED RELOGIN!!!")
         logger.trace("DO RELOGIN!!!\n")
-        self.connect.reconnect()
+        self._connect.reconnect()
 
     @timing_decorator
-    def run_fight(self) -> None:
+    def _run_fight(self) -> None:
         """Fight while"""
         fight_iteration = 0
         start_time = time.perf_counter()
 
-        self.continue_fight = True
-        while self.continue_fight:
+        self._continue_fight = True
+        while self._continue_fight:
             if self._is_error():
                 self._reconnect()
-            self._stop_or_hit(fight_iteration)
+            self._stop_or_hit()
             fight_iteration += 1
             start_time = check_iter(fight_iteration, start_time)
 
-    def _from_city_to_inventory(self) -> None:
-        """construct the request and send it"""
-        logger.success("in city")
-        prepare = self._find_pattern(FIND_IN_CITY)
-        vcode = prepare[0].split("=")[-1]
-        data = {"get_id": "56", "act": "10", "go": "inv", "vcode": vcode}
-        self.connect.get_html(URL_MAIN, data=data)
+    def _change_location(self, location: Location) -> None:
+        """Change location
 
-    def from_nature_to_inventory(self) -> None:
-        """construct the request and send it"""
-        logger.success("in nature")
-        prepare = self._find_pattern(FIND_FROM_NATURE_TO_INV)
-        logger.debug(f"{prepare=}")
-        if prepare:
-            request_data = {"get_id": "56", "act": "10", "go": "inv", "vcode": prepare[0]}
-            self.connect.get_html(URL_MAIN, data=request_data)
-
-    def from_info_to_inventory(self) -> None:
-        """construct the request and send it"""
-        logger.success("in info")
-        if not self.prepare:
-            logger.debug("not self.prepare")
-            prepare = self._find_pattern(FIND_PAGE_INVENTORY)
-        else:
-            logger.debug("self.prepare exists")
-            prepare = self.prepare
-        if prepare:
-            vcode = prepare[0].split("=")[-1]
-            data = {"get_id": "56", "act": "10", "go": "inv", "vcode": vcode}
-            self.connect.get_html(URL_MAIN, data=data)
-        else:
-            logger.debug('from_info_to_inventory not find ?<=&go=inv&vcode=).+(?=\'" value="Инвентарь')
-
-    def from_elixir_to_inventory(self, html):
-        """construct the request and send it"""
-        logger.success("in elixir")
-        site_url = "http://www.neverlands.ru/main.php?wca=28"
-        self.connect.get_html(site_url)
-
-    def do_nothing(self) -> None:
-        """Do nothing"""
-        pass
-
-    def to_elixir(self) -> None:
-        """construct the request and send it"""
-        location = self.where_i_am()
-        logger.success(f"{location.value=}")
-
-        location_to_inventory = {
-            Location.FIGHT.value: self.run_fight,
-            Location.CITY.value: self._from_city_to_inventory,
-            Location.NATURE.value: self.from_nature_to_inventory,
-            Location.INVENTORY.value: self.do_nothing,
-            Location.ELIXIR.value: self.from_elixir_to_inventory,
-            Location.INFO.value: self.from_info_to_inventory,
-        }
-        location_to_inventory[location.value]()
-        self.go_to_elixir()
+        :param location: destination
+        :type location: Location
+        """
+        self._person_location.go_to_location(location)
 
     def bait(self) -> str:
         """Start bait
@@ -326,111 +267,52 @@ class Game:
         :return: result
         :rtype: str
         """
-
-        self._get_chat()
-        self.go_to_inventory()
-
-        self.to_elixir()
-
+        self._person_chat.send_chat_message_to_telegram()
+        if self._person_location.location == Location.FIGHT:
+            self._run_fight()
+        self._change_location(Location.ELIXIR)
         self.ab_while()
-
-        text = f"{NICKNAME} All Done"
+        text = f"{self._nickname} All Done"
         send_telegram(text)
         return text
+
+    def _summon_bot(self, bot_type: SummonBotType) -> None:
+        if self._retry == 3:
+            logger.warning("No bot anywhere")
+            return
+        if self._retry == 2:
+            bot_type.change_bot()
+        self._use(item=bot_type.name)
+        if FIND_FIGHT in self._connect.get_html_page_text():
+            logger.success(f"IN fight {bot_type.name}")
+            self._run_fight()
+        else:
+            self._retry += 1
+            self._summon_bot(bot_type)
 
     def ab_while(self) -> None:
         """Start while"""
         while True:
-            # HACK
-            if self.iter_number == 300:
+            logger.warning(f"{self._iter_number=}")
+            if self._iter_number == COUNT_ITER:
                 break
 
-            logger.warning(f"{self.iter_number=}")
-            self.to_elixir()
+            if self._person_location.location == Location.FIGHT:
+                self._run_fight()
+            self._change_location(Location.ELIXIR)
 
-            if self.my_hp < START_HP or self.my_mp < START_MP:
-                self._use(item=HEAL)
+            if self._my_hp < START_HP or self._my_mp < START_MP:
+                self._use(item=Elixir.HEAL.value)
 
-            item = PLANAR
-            # item = BAIT
-            self._use(item=item)
+            self._retry = 0
+            bot_type = SummonBotType(first_item=Summon.PLANAR, second_item=Summon.BAIT)
+            self._summon_bot(bot_type)
 
-            res = self.connect.get_html_page_text()
-            if "var param_en" in res:
-                logger.success(f"IN fight {item}")
-                self.run_fight()
-            else:
-                result = self.connect.get_html_page_text()
-                if "var param_en" in result:
-                    logger.success(f"IN fight {item}")
-                    self.run_fight()
-                else:
-                    item2 = BAIT
-                    # item2 = PLANAR
-                    self._use(item=item2)
-                    res2 = self.connect.get_html_page_text()
-                    if "var param_en" in res2:
-                        logger.success(f"IN fight {item2}")
-                        self.run_fight()
-                    else:
-                        logger.warning("No bot anywhere")
+            if self._iter_number % 50 == 0:
+                logger.success(f"{self._iter_number=}")
+                self._person_chat.send_chat_message_to_telegram()
 
-            if self.iter_number % 50 == 0:
-                logger.success(f"{self.iter_number=} _get_chat")
-                self._get_chat()
-                self.go_to_inventory()
-
-            self.iter_number += 1
-
-    def go_to_inventory(self) -> None:
-        """construct the request and send it"""
-        logger.success("go_to_inventory")
-        data = {"im": 0}
-        self.connect.get_html(URL_MAIN, data=data)
-
-    def go_to_elixir(self) -> None:
-        """construct the request and send it"""
-        logger.success("go_to_elixir")
-        data = {"im": 6}
-        self.connect.get_html(URL_MAIN, data=data)
-
-    def _get_chat(self) -> None:
-        """Get chat"""
-        url = URL_KEEP_CONNECTION.format(rand_float=random.random())
-        self.connect.get_html(url)
-        text_string = self.connect.get_html_page_text()
-        self.connect.get_html(URL_MAIN)
-        pattern = r"(?<=\.add_msg\().+(?=\);)"
-        finder = re.compile(pattern)
-        messages = finder.findall(text_string)
-        logger.info(f"_get_chat {messages=}")
-        self._is_message_for_person(messages)
-
-    @staticmethod
-    def _is_message_for_person(messages: list[str]) -> None:
-        """Send messages for person
-
-        :param messages: list message
-        :type messages: list[str]
-        """
-        pattern = r"(?<=<SPL>).+(?=<SPL>)"
-        finder = re.compile(pattern)
-        for mes in messages:
-            text = finder.findall(mes)
-            if text:
-                if NICKNAME in str(text[0]):
-                    from_name = r"(?<=<SPAN>).+(?=</SPAN>)"
-                    finder2 = re.compile(from_name)
-                    sender_name = finder2.findall(str(text[0]))
-                    if sender_name:
-                        only_text_pattern = r"(?<=<font color=.{7}).+(?=</font>)"
-                        finder3 = re.compile(only_text_pattern)
-                        only_text = finder3.findall(mes)
-                        text_for_message = (
-                            f"Игроку {NICKNAME} пишут в чат!\nОтправитель: {sender_name[0]} --- {only_text[0]}"
-                        )
-                        logger.error(text_for_message)
-                        send_telegram(text_for_message)
+            self._iter_number += 1
 
     @timing_decorator
     def _use(self, *, item: str) -> None:
@@ -439,10 +321,8 @@ class Game:
         :param item: using item num
         :type item: str
         """
-        first_part = r"(?<=get_id=43&act="
-        second_part = "&uid=).+?' }"
-        pattern = first_part + item + second_part
-        results = self._find_pattern(pattern)
+        pattern = FIND_USE_ITEM_PART1 + item + FIND_USE_ITEM_PART2
+        results: list[str] = re.findall(pattern, self._connect.get_html_page_text())
         if results:
             for string in results:
                 arg_lst = string.replace(r"' }", "").split("&")
@@ -456,59 +336,16 @@ class Game:
                     key, value = item.split("=")
                     data[key] = value
 
-                self.connect.get_html(URL_MAIN, data=data)
+                self._connect.get_html(URL_MAIN, data=data)
             except UnboundLocalError:
                 logger.error(f"{results=}")
                 logger.error(f"{pattern=}")
                 logger.error(f"{item=}")
-                logger.critical("\nнапал бот на природе\n")
-                self.run_fight()
-                self.to_elixir()
+                logger.critical("\n Fight on nature with bots\n")
+                self._run_fight()
+                self._change_location(Location.ELIXIR)
                 self._use(item=item)
         else:
-            text = f"\nНЕТ {item}\n"
+            text = f"\n No item {item}\n"
             logger.critical(text)
             send_telegram(text)
-
-    def where_i_am(self) -> Location:
-        """where i am
-
-        :return: location where i am
-        :rtype: Location
-        """
-        # When you are login person can be in these three position
-        # 1 - info
-        # 2 - inventory
-        # 3 - city or nature
-        html = self.connect.get_html_page_text()
-
-        if "var param_en" in html:
-            logger.success("in fight")
-            return Location.FIGHT
-
-        if "DISABLED" not in html:
-            logger.success("on nature")
-            self.prepare = list()
-            return Location.NATURE
-
-        if '"Инвентарь" DISABLED>' in html:
-            # HACK ELIXIR have the same as inventory but not
-            logger.success("in inventory")
-            self.prepare = list()
-            return Location.INVENTORY
-
-        prepare = self._find_pattern(FIND_IN_CITY, html)
-        logger.debug(f"{prepare=}")
-        if prepare:
-            logger.success("in city")
-            self.prepare = prepare
-            return Location.CITY
-
-        prepare = self._find_pattern(FIND_PAGE_INVENTORY, html)
-        if not prepare:
-            logger.success("in elixir")
-            return Location.ELIXIR
-
-        self.prepare = prepare
-        logger.success("in info")
-        return Location.INFO

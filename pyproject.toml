@@ -14,7 +14,6 @@ python-dotenv = "^1.0.0"
 pandas = "^2.0.0"
 pydantic = "^1.10.7"
 
-
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
@@ -29,6 +28,37 @@ flake8-commas = "^2.1.0"
 flake8-variables-names = "^0.0.5"
 flake8-import-order = "^0.18.1"
 black = {version = "^22.3.0", allow-prereleases = true}
-flake8 = "^4.0.1"
 mypy = "^0.961"
+flake8 = "^6.0.0"
+flake8-pyproject = "^1.2.3"
+types-requests = "^2.28.11.17"
 
+[tool.pytest.ini_options]
+addopts = "-vvv"
+testpaths = [
+    "tests",
+]
+
+[tool.flake8]
+max-line-length = 120
+exclude = [
+    ".git",
+    "__pycache__",
+    "docs/source/conf.py",
+    "old",
+    "build",
+    "dist",
+    "env",
+    "venv",
+    ".venv",
+    ".env",
+    ".python-version",
+]
+max-complexity = 8
+extend-ignore = ["C812""I100", "I201"]
+per-file-ignores = """
+    */__init__.py: F401, I202
+"""
+
+[tool.mypy]
+ignore_missing_imports = true
