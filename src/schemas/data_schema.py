@@ -6,8 +6,6 @@ from typing import Union
 from pydantic import BaseModel
 from pydantic import Field
 
-# from attrs import define
-
 from request import Connection
 
 
@@ -35,18 +33,6 @@ class EndBattleProp:
 class EndBattle(EndBattleProp):
     get_id: str = attr.ib(default="61")
     act: str = attr.ib(default="7")
-
-
-# @attr.s
-# class DataForFight:
-#     fight_ty: list[str | int | float] = attr.ib()
-#     param_ow: list[str | int | float] = attr.ib()
-#     lives_g1: list[str | int | float] = attr.ib()
-#     lives_g2: list[str | int | float] = attr.ib()
-#     alchemy: list[str | int | float] = attr.ib()
-#     magic_in: list[str | int | float] = attr.ib()
-#     param_en: list[str | int | float] = attr.ib()
-#     fight_pm: list[str | int | float] = attr.ib()
 
 
 @attr.s
