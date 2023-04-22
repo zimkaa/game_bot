@@ -1,5 +1,3 @@
-from time import perf_counter
-
 from loguru import logger
 
 from config import NICKNAME
@@ -50,7 +48,7 @@ def main():
     check_ip()
 
     connect = Connection(PROXY)
-    fight = Fight()
+    fight = Fight(nickname=NICKNAME)
     person_location = PersonLocation(connect=connect)
     person_chat = PersonChat(connect=connect)
     game = Game(
