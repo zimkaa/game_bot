@@ -31,7 +31,7 @@ class PersonChat:
     def send_chat_message_to_telegram(self):
         self._get_chat()
         if not self._is_empty_chat():
-            if text := self._prepare_message_for_person(self._messages):
+            if text := self._prepare_message_for_person():
                 logger.error(text)
                 send_telegram(text)
         self._messages = list()
