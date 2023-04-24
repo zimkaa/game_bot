@@ -278,7 +278,7 @@ class Game:
         return text
 
     def _summon_bot(self, bot_type: SummonBotType) -> None:
-        if self._retry == 3:
+        if self._retry == 4:
             logger.warning("No bot anywhere")
             return
         if self._retry == 2:
