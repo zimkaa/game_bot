@@ -11,9 +11,9 @@ load_dotenv()
 
 START_HP = 2_000
 
-START_MP = 5_000
+START_MP = 4_200
 
-COUNT_ITER = 3
+COUNT_ITER = 300
 
 START_ITER = 1
 
