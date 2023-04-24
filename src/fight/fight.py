@@ -57,6 +57,7 @@ class Fight:
         self._magic_in: list[str]
         self._alchemy: list[str]
         self._nickname = nickname
+        self._bot_count: int
 
     def setup_value(self, page_text: str) -> None:
         """Fills in the values"""
@@ -103,7 +104,8 @@ class Fight:
             pattern = FIND_LIVES_G2
         else:
             pattern = FIND_FIGHT_VARIABLES_PART1 + find_value + FIND_FIGHT_VARIABLES_PART2
-        result: list[str] = re.findall(pattern, self._page_text)
+        page_text = self._page_text
+        result: list[str] = re.findall(pattern, page_text)
         if result:
             if find_value == "logs":
                 new_res = result[0].replace(",,", ',"was empty in log",')
@@ -413,7 +415,7 @@ class Fight:
 
         self._get_query()
 
-    def _all_info(self) -> list[str]:
+    def _all_info(self) -> None:
         """Get info on console log"""
         number = 2
         hp_bots = []
@@ -428,10 +430,10 @@ class Fight:
             hp_bots.append(value[number])
             number += 5
         text = f"hp_bots = {hp_bots}"
+        self._bot_count = len(hp_bots)
         logger.info(text)
         text2 = f"bot_name = {self._bot_name}"
         logger.success(text2)
-        return hp_bots
 
     def _conditions_heal(self, maximum: float, needed_percent: float = 0.0, need: float = 0.0) -> float:
         """Get value for minimum hp or mp
