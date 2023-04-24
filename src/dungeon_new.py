@@ -127,7 +127,9 @@ class Game:
         :return: query data
         :rtype: dict[str, str]
         """
-        text_for_message = f"{self._nickname} END BATTLE"
+        text_for_message = (
+            f"{self._nickname} END BATTLE {self._fight_class._bot_level} count {self._fight_class._bot_count}"
+        )
         logger.info(text_for_message)
         return {
             "get_id": "61",
