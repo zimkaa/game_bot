@@ -306,11 +306,10 @@ class Game:
                 self._use(item=Elixir.ELIXIR_OF_RESTORATION.value)
 
             self._retry = 0
-            # bot_type = SummonBotType(first_item=Summon.PLANAR, second_item=Summon.BAIT)
             bot_type = SummonBotType(first_item=Summon.BAIT, second_item=Summon.BAIT)
             self._summon_bot(bot_type)
 
-            if self._iter_number % 50 == 0:
+            if self._iter_number % 3 == 0:
                 logger.success(f"{self._iter_number=}")
                 self._person_chat.send_chat_message_to_telegram()
 
