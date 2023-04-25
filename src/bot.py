@@ -26,6 +26,14 @@ sentry_sdk.init(
     environment="production",
 )
 
+logger.add(
+    "main.log",
+    format="{time} {level} {message}",
+    level="TRACE",
+    rotation="10 MB",
+    compression="zip",
+)
+
 
 def get_current_ip() -> str:
     """Get current IP
@@ -75,9 +83,7 @@ def main():
     logger.success("That's all")
 
 
-if __name__ == "__main__":
-    logger.add("main.log", format="{time} {level} {message}", level="TRACE", rotation="10 MB", compression="zip")
-
+def start():
     try:
         main()
     except Exception as error:
