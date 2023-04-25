@@ -7,3 +7,4 @@ sentry-sdk==1.20.0
 mypy==0.961
 flake8==6.0.0
 flake8-pyproject==1.2.3
+flake8-builtins==1.5.3
