@@ -22,7 +22,5 @@ jobs:
           pip install -r requirements-dev.txt
       - name: Run mypy
         run: mypy .
-      - name: Reinstall deps
-        run: pip install flake8-pyproject
       - name: Run flake8
-        run: flake8 .
+        run: flake8 --toml-config=pyproject.toml .
