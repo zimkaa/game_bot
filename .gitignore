@@ -10,7 +10,6 @@ logs/
 ## files
 *.pyc
 *.log
-*.txt
 *.log.zip
 *.sh
 
