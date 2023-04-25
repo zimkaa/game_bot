@@ -23,4 +23,4 @@ jobs:
       - name: Run mypy
         run: mypy .
       - name: Run flake8
-        run: flake8 --toml-config=pyproject.toml .
+        run: flake8
