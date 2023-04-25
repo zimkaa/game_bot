@@ -51,12 +51,13 @@ def check_ip():
 
     :raises Exception: wrong IP
     """
-    ip = get_current_ip()
+    if PROXY:
+        ip = get_current_ip()
 
-    if PROXY_IP in ip:
-        logger.info(f"\n-------ip------- {ip} LOGIN {NICKNAME}" * 5)
-    else:
-        raise Exception("Wrong IP")
+        if PROXY_IP in ip:
+            logger.info(f"\n-------ip------- {ip} LOGIN {NICKNAME}" * 5)
+        else:
+            raise Exception("Wrong IP")
 
 
 def main():
