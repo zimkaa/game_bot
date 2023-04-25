@@ -14,7 +14,6 @@ from config import KICK_MAG
 from config import KICK_WARRIOR
 from config import MAG
 from config import MP_LIST_MP
-from config import PERSON_ROLE
 from config import PERSON_TYPE
 from config import WARRIOR
 
@@ -264,7 +263,7 @@ class Fight:
     def _read_json(self) -> None:
         """Create all dict_hits"""
         dir_path = Path(__file__).parent.resolve()
-        file_name = "hit_dict_new"
+        file_name = "hit_dict"
         file_path = os.path.join(dir_path, "settings", f"{file_name}.json")
 
         with open(file_path, "r", encoding="utf8") as file:
@@ -332,7 +331,7 @@ class Fight:
         config = None
         bot_group = None
 
-        file_name = f"fight_config_{PERSON_ROLE}_{PERSON_TYPE}"
+        file_name = f"fight_config_{PERSON_TYPE}"
         logger.critical(f"{file_name=}")
         fight_conf = get_fight_config(file_name)
         for element in fight_conf:

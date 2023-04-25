@@ -14,7 +14,6 @@ from .local_config import HEADER
 from .local_config import LOGIN
 from .local_config import NICKNAME
 from .local_config import PASSWORD
-from .local_config import PERSON_ROLE
 from .local_config import PERSON_TYPE
 from .local_config import PROXIES
 from .local_config import PROXY
