@@ -77,8 +77,8 @@ class Game:
     def _init_variables(self) -> None:
         """Init variables"""
         self._iter_number: int = START_ITER
-        self._my_hp: int = START_HP
-        self._my_mp: int = START_MP
+        self._my_hp: float = START_HP
+        self._my_mp: float = START_MP
         self._my_od: int = 0
         self._inu: str = ""
         self._inb: str = ""
