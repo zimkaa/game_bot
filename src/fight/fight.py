@@ -4,28 +4,28 @@ import re
 from pathlib import Path
 from typing import Any
 
-from config import ANY_PROF_HITS  # noqa: I100
-from config import DICT_NAME_BOOST_MP
-from config import FIND_FIGHT_VARIABLES_PART1
-from config import FIND_FIGHT_VARIABLES_PART2
-from config import FIND_LIVES_G2
-from config import HIT_SCROLLS
-from config import KICK_MAG
-from config import KICK_WARRIOR
-from config import MAG
-from config import MP_LIST_MP
-from config import PERSON_TYPE
-from config import WARRIOR
-
 from loguru import logger
 
 from pandas import DataFrame
 from pandas import concat
 
-from request import send_telegram
+from ..config import ANY_PROF_HITS  # noqa: I100
+from ..config import DICT_NAME_BOOST_MP
+from ..config import FIND_FIGHT_VARIABLES_PART1
+from ..config import FIND_FIGHT_VARIABLES_PART2
+from ..config import FIND_LIVES_G2
+from ..config import HIT_SCROLLS
+from ..config import KICK_MAG
+from ..config import KICK_WARRIOR
+from ..config import MAG
+from ..config import MP_LIST_MP
+from ..config import PERSON_TYPE
+from ..config import WARRIOR
 
-from schemas import FightConfig
-from schemas import Hit
+from ..request import send_telegram
+
+from ..schemas import FightConfig
+from ..schemas import Hit
 
 from .config_fight import get_fight_config
 

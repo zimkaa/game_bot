@@ -2,22 +2,22 @@ from loguru import logger
 
 import sentry_sdk
 
-from config import NICKNAME  # noqa: I100
-from config import PROXIES
-from config import PROXY
-from config import PROXY_IP
+from .config import NICKNAME  # noqa: I100
+from .config import PROXIES
+from .config import PROXY
+from .config import PROXY_IP
 
-from dungeon_new import Game
+from .dungeon_new import Game
 
-from fight import Fight
+from .fight import Fight
 
-from person_chat import PersonChat
+from .person_chat import PersonChat
 
-from person_location import PersonLocation
+from .person_location import PersonLocation
 
-from request import Connection
-from request import my_ip
-from request import send_telegram
+from .request import Connection
+from .request import my_ip
+from .request import send_telegram
 
 
 sentry_sdk.init(

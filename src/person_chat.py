@@ -3,15 +3,15 @@ import re
 
 from loguru import logger
 
-from config import FIND_CHAT  # noqa: I100
-from config import FIND_MESSAGE_FOR_PERSON
-from config import FIND_MESSAGE_TEXT
-from config import FIND_SENDER_NAME
-from config import NICKNAME
-from config import URL_KEEP_CONNECTION
+from .config import FIND_CHAT  # noqa: I100
+from .config import FIND_MESSAGE_FOR_PERSON
+from .config import FIND_MESSAGE_TEXT
+from .config import FIND_SENDER_NAME
+from .config import NICKNAME
+from .config import URL_KEEP_CONNECTION
 
-from request import Connection
-from request import send_telegram
+from .request import Connection
+from .request import send_telegram
 
 
 FINDER_CHAT = re.compile(FIND_CHAT)

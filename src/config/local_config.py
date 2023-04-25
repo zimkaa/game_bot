@@ -12,7 +12,7 @@ START_HP = 2_000
 
 START_MP = 4_200
 
-COUNT_ITER = 300
+COUNT_ITER = 3
 
 START_ITER = 1
 
@@ -36,7 +36,7 @@ PROXY_PASS = os.getenv("PROXY_PASS")
 
 PROXY_PORT = os.getenv("PROXY_PORT")
 
-CHANNEL_ID = os.getenv("CHANNEL_ID", "277594923")
+CHANNEL_ID = os.getenv("CHANNEL_ID")
 
 TG_TOKEN = os.getenv("TG_TOKEN")
 

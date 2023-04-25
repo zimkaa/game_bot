@@ -1,21 +1,21 @@
 from dotenv import load_dotenv
 
-from buffs import AIR_BARRIER  # noqa: I100
-from buffs import BOUNTY_OF_LIGHTNING
-from buffs import FIRE_SHIELD
-from buffs import FLAMING_RACK
-from buffs import HEADWIND
-from buffs import IFRITS_CURSE
-from buffs import INCREDIBLE_ACCURACY
-from buffs import METEOR_SHIELD
-from buffs import POISONING
-from buffs import POWER
-from buffs import PUSH
-from buffs import QUICKSAND
-from buffs import SAND_WALL
-from buffs import SOURCE
-from buffs import STONE_FLESH
-from buffs import VULNERABLE_TO_FIRE
+from ..buffs import AIR_BARRIER  # noqa: I100
+from ..buffs import BOUNTY_OF_LIGHTNING
+from ..buffs import FIRE_SHIELD
+from ..buffs import FLAMING_RACK
+from ..buffs import HEADWIND
+from ..buffs import IFRITS_CURSE
+from ..buffs import INCREDIBLE_ACCURACY
+from ..buffs import METEOR_SHIELD
+from ..buffs import POISONING
+from ..buffs import POWER
+from ..buffs import PUSH
+from ..buffs import QUICKSAND
+from ..buffs import SAND_WALL
+from ..buffs import SOURCE
+from ..buffs import STONE_FLESH
+from ..buffs import VULNERABLE_TO_FIRE
 
 
 load_dotenv()

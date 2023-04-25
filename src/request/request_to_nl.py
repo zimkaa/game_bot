@@ -7,16 +7,16 @@ from pathlib import Path
 from loguru import logger
 import requests  # noqa: I201
 
-from config import CHANNEL_ID  # noqa: I100
-from config import CHECKER_IP_SITE
-from config import DATA
-from config import HEADER
-from config import NICKNAME
-from config import PROXIES
-from config import TG_TOKEN
-from config import URL
-from config import URL_GAME
-from config import URL_MAIN
+from ..config import CHANNEL_ID  # noqa: I100
+from ..config import CHECKER_IP_SITE
+from ..config import DATA
+from ..config import HEADER
+from ..config import NICKNAME
+from ..config import PROXIES
+from ..config import TG_TOKEN
+from ..config import URL
+from ..config import URL_GAME
+from ..config import URL_MAIN
 
 
 logging.basicConfig(
@@ -192,8 +192,8 @@ class Connection:
 
 
 def send_telegram(text: str) -> None:
-    method = "https://api.telegram.org/bot" + TG_TOKEN + "/sendMessage"  # type: ignore
     if CHANNEL_ID:
+        method = "https://api.telegram.org/bot" + TG_TOKEN + "/sendMessage"  # type: ignore
         result = requests.post(
             method,
             data={

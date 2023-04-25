@@ -3,35 +3,35 @@ import time
 
 from loguru import logger
 
-from config import COUNT_ITER  # noqa: I100
-from config import FIND_ERROR
-from config import FIND_FEXP
-from config import FIND_FIGHT
-from config import FIND_PARAM_OW
-from config import FIND_USE_ITEM_PART1
-from config import FIND_USE_ITEM_PART2
-from config import NICKNAME
-from config import START_HP
-from config import START_ITER
-from config import START_MP
-from config import URL_MAIN
+from .config import COUNT_ITER  # noqa: I100
+from .config import FIND_ERROR
+from .config import FIND_FEXP
+from .config import FIND_FIGHT
+from .config import FIND_PARAM_OW
+from .config import FIND_USE_ITEM_PART1
+from .config import FIND_USE_ITEM_PART2
+from .config import NICKNAME
+from .config import START_HP
+from .config import START_ITER
+from .config import START_MP
+from .config import URL_MAIN
 
-from elixir import Elixir
+from .elixir import Elixir
 
-from enemy import Summon
-from enemy import SummonBotType
+from .enemy import Summon
+from .enemy import SummonBotType
 
-from fight import Fight
+from .fight import Fight
 
-from helpers import timing_decorator
+from .helpers import timing_decorator
 
-from person_chat import PersonChat
+from .person_chat import PersonChat
 
-from person_location import Location
-from person_location import PersonLocation
+from .person_location import Location
+from .person_location import PersonLocation
 
-from request import Connection
-from request import send_telegram
+from .request import Connection
+from .request import send_telegram
 
 
 def check_iter(fight_iteration: int, start_time: float) -> float:

@@ -1,6 +1,6 @@
 from enum import Enum
 
-from elixir import Elixir
+from .elixir import Elixir
 
 
 class Summon(str, Enum):

@@ -7,7 +7,7 @@ import attr
 from pydantic import BaseModel
 from pydantic import Field
 
-from request import Connection
+from ..request import Connection
 
 
 @attr.s
