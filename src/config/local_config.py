@@ -20,7 +20,7 @@ PERSON_TYPE = MAG
 
 CHECKER_IP_SITE = os.getenv("CHECKER_IP_SITE3", "http://ipinfo.io/ip")
 
-LOGIN = os.getenv("LOGIN")
+LOGIN = os.getenv("LOGIN", "Example_login")
 PASSWORD = os.getenv("PASSWORD")
 
 NICKNAME = LOGIN
