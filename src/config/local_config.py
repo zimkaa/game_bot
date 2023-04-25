@@ -21,10 +21,6 @@ PERSON_ROLE = SOLO
 
 PERSON_TYPE = MAG
 
-CHANNEL_ID_FRIENDS = os.getenv("CHANNEL_ID_FRIENDS")
-
-CHANNEL_ID_LEADER = os.getenv("CHANNEL_ID_LEADER")
-
 CHECKER_IP_SITE = os.getenv("CHECKER_IP_SITE3", "http://ipinfo.io/ip")
 
 LOGIN = os.getenv("LOGIN")

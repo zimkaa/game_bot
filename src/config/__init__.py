@@ -7,8 +7,6 @@ from .config_hits import KICK_MAG
 from .config_hits import KICK_WARRIOR
 
 from .local_config import CHANNEL_ID
-from .local_config import CHANNEL_ID_FRIENDS
-from .local_config import CHANNEL_ID_LEADER
 from .local_config import CHECKER_IP_SITE
 from .local_config import COUNT_ITER
 from .local_config import DATA

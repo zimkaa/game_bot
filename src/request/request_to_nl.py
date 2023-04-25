@@ -8,8 +8,6 @@ from loguru import logger
 import requests  # noqa: I201
 
 from config import CHANNEL_ID  # noqa: I100
-from config import CHANNEL_ID_FRIENDS
-from config import CHANNEL_ID_LEADER
 from config import CHECKER_IP_SITE
 from config import DATA
 from config import HEADER
@@ -206,22 +204,6 @@ def send_telegram(text: str) -> None:
         logger.debug(f"{CHANNEL_ID=}")
         if result.status_code != 200:
             logger.critical("Some trouble with TG")
-    if CHANNEL_ID_FRIENDS or CHANNEL_ID_LEADER:
-        logger.debug("if CHANNEL_ID_FRIENDS:")
-        lst_id = CHANNEL_ID_FRIENDS.split(",")
-        if CHANNEL_ID_LEADER and CHANNEL_ID_LEADER not in lst_id and CHANNEL_ID != CHANNEL_ID_LEADER:
-            lst_id.append(CHANNEL_ID_LEADER)
-        for chanel_id in lst_id:
-            logger.debug(f"{chanel_id=}")
-            query = requests.post(
-                method,
-                data={
-                    "chat_id": chanel_id,  # type: ignore
-                    "text": text,  # type: ignore
-                },
-            )
-            if query.status_code != 200:
-                logger.critical("Some trouble with TG")
 
 
 def my_ip(proxies: dict = None) -> str:
