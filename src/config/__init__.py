@@ -50,8 +50,5 @@ from .urls import URL_GAME
 from .urls import URL_KEEP_CONNECTION
 from .urls import URL_MAIN
 
-from .variable_names import LEADER
 from .variable_names import MAG
-from .variable_names import SLAVE
-from .variable_names import SOLO
 from .variable_names import WARRIOR

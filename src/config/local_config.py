@@ -3,7 +3,6 @@ import os
 from dotenv import load_dotenv
 
 from .variable_names import MAG
-from .variable_names import SOLO
 
 
 load_dotenv()
