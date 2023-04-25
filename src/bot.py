@@ -59,7 +59,6 @@ def check_ip():
         raise Exception("Wrong IP")
 
 
-# @logger.catch
 def main():
 
     check_ip()
