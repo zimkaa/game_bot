@@ -9,7 +9,9 @@ from loguru import logger
 from pandas import DataFrame
 from pandas import concat
 
-from ..config import ANY_PROF_HITS  # noqa: I100
+from .config_fight import get_fight_config
+
+from ..config import ANY_PROF_HITS
 from ..config import DICT_NAME_BOOST_MP
 from ..config import FIND_FIGHT_VARIABLES_PART1
 from ..config import FIND_FIGHT_VARIABLES_PART2
@@ -22,12 +24,11 @@ from ..config import MP_LIST_MP
 from ..config import PERSON_TYPE
 from ..config import WARRIOR
 
+
 from ..request import send_telegram
 
 from ..schemas import FightConfig
 from ..schemas import Hit
-
-from .config_fight import get_fight_config
 
 
 logger.add(
