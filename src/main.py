@@ -4,7 +4,7 @@ from loguru import logger
 
 import sentry_sdk
 
-from .bot import main
+from .bot import start_bot
 
 from .initial_settings import create_person
 from .initial_settings import get_data_from_env_file
@@ -31,7 +31,7 @@ def start(arguments: dict[str, Any]):
     person = create_person(data)
 
     try:
-        main(person)
+        start_bot(person)
     except Exception as error:
         text = f"{person.nickname} - trouble!!!"
         sentry_sdk.capture_exception(error=error)

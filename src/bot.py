@@ -48,7 +48,7 @@ def check_ip(person: Player):
             raise Exception("Wrong IP")
 
 
-def main(person: Player):
+def start_bot(person: Player):
 
     check_ip(person)
 
