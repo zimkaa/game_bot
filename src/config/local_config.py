@@ -25,9 +25,6 @@ PASSWORD = os.getenv("PASSWORD")
 
 NICKNAME = LOGIN
 
-player_nick = LOGIN
-player_password = PASSWORD
-
 PROXY = False
 PROXY_IP = os.getenv("PROXY_IP")
 
@@ -44,13 +41,3 @@ user_agent = "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; \
 rv:11.0) like Gecko"
 
 HEADER = {"User-Agent": user_agent}
-
-DATA = {
-    "player_nick": LOGIN,
-    "player_password": PASSWORD,
-}
-
-PROXIES = {
-    "http": f"http://{PROXY_LOGIN}:{PROXY_PASS}@{PROXY_IP}:{PROXY_PORT}",
-    "https": f"https://{PROXY_LOGIN}:{PROXY_PASS}@{PROXY_IP}:{PROXY_PORT}",
-}

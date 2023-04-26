@@ -3,7 +3,7 @@ import time
 
 from loguru import logger
 
-from .config import COUNT_ITER  # noqa: I100
+from .config import COUNT_ITER
 from .config import FIND_ERROR
 from .config import FIND_FEXP
 from .config import FIND_FIGHT
