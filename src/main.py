@@ -21,9 +21,9 @@ sentry_sdk.init(
 
 
 def start(arguments: dict[str, Any]):
-    proxy = arguments.get("use_proxy")
+    proxy = arguments.get("use_proxy", False)
     if arguments.get("set_manual_settings"):
-        use_tg = arguments.get("use_tg")
+        use_tg = arguments.get("use_tg", False)
         data = get_settings_from_user_input(proxy, use_tg)
     else:
         data = get_data_from_env_file(proxy)

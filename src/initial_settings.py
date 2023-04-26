@@ -50,9 +50,9 @@ def get_data_from_env_file(proxy: bool) -> dict[str, Any]:
 
     load_dotenv()
 
-    nickname = os.getenv("LOGIN")
+    nickname = os.getenv("LOGIN", "Example_login")
     login = set_login(nickname)
-    password = os.getenv("PASSWORD")
+    password = os.getenv("PASSWORD", "Example_password")
 
     proxy_ip = os.getenv("PROXY_IP", "")
     proxy_login = os.getenv("PROXY_LOGIN", "")
@@ -62,7 +62,7 @@ def get_data_from_env_file(proxy: bool) -> dict[str, Any]:
     tg_id = int(os.getenv("CHANNEL_ID", 0))
     tg_token = os.getenv("TG_TOKEN", "")
 
-    data = {
+    data: dict[str, Any] = {
         "nickname": nickname,
         "password": password,
         "proxy": proxy,
@@ -81,7 +81,7 @@ def set_nickname() -> dict[str, str]:
     nickname = input("Login: ")
     if not nickname:
         print("Empty login. Try one more time")
-        nickname = set_nickname()
+        nickname = set_nickname()["nickname"]
     return {"nickname": nickname}
 
 
@@ -101,7 +101,7 @@ def set_proxy_ip() -> dict[str, str]:
     proxy_ip = input("Proxy IP: ")
     if not validators.ip_address.ipv4(proxy_ip):
         print("Wrong IP address. Try one more time")
-        proxy_ip = set_proxy_ip()
+        proxy_ip = set_proxy_ip()["proxy_ip"]
     return {"proxy_ip": proxy_ip}
 
 

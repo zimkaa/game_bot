@@ -20,19 +20,6 @@ PERSON_TYPE = MAG
 
 CHECKER_IP_SITE = os.getenv("CHECKER_IP_SITE3", "http://ipinfo.io/ip")
 
-LOGIN = os.getenv("LOGIN", "Example_login")
-PASSWORD = os.getenv("PASSWORD")
-
-NICKNAME = LOGIN
-
-PROXY = False
-PROXY_IP = os.getenv("PROXY_IP")
-
-PROXY_LOGIN = os.getenv("PROXY_LOGIN")
-PROXY_PASS = os.getenv("PROXY_PASS")
-
-PROXY_PORT = os.getenv("PROXY_PORT")
-
 CHANNEL_ID = os.getenv("CHANNEL_ID")
 
 TG_TOKEN = os.getenv("TG_TOKEN")

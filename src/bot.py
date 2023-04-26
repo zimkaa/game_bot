@@ -40,7 +40,7 @@ def check_ip(person: Player):
     :raises Exception: wrong IP
     """
     if person.proxy:
-        ip = get_current_ip()
+        ip = get_current_ip(person)
 
         if person.proxy_ip in ip:
             logger.info(f"\n-------ip------- {ip} LOGIN {person.nickname}" * 5)
@@ -55,7 +55,7 @@ def main(person: Player):
     connect = Connection(person)
     fight = Fight(nickname=person.nickname)
     person_location = PersonLocation(connect=connect)
-    person_chat = PersonChat(connect=connect)
+    person_chat = PersonChat(connect=connect, nickname=person.nickname)
     game = Game(
         fight=fight,
         connect=connect,

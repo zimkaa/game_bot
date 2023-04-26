@@ -3,13 +3,11 @@ import re
 
 from loguru import logger
 
-from .config import FIND_CHAT  # noqa: I100
+from .config import FIND_CHAT
 from .config import FIND_MESSAGE_FOR_PERSON
 from .config import FIND_MESSAGE_TEXT
 from .config import FIND_SENDER_NAME
-from .config import NICKNAME
 from .config import URL_KEEP_CONNECTION
-
 from .request import Connection
 from .request import send_telegram
 
@@ -24,8 +22,9 @@ FINDER_MESSAGE_TEXT = re.compile(FIND_MESSAGE_TEXT)
 
 
 class PersonChat:
-    def __init__(self, *, connect: Connection) -> None:
+    def __init__(self, *, connect: Connection, nickname: str) -> None:
         self._connect = connect
+        self._nickname = nickname
         self._messages: list[str]
 
     def send_chat_message_to_telegram(self):
@@ -59,11 +58,11 @@ class PersonChat:
         for mes in self._messages:
             text = FINDER_MESSAGE_FOR_PERSON.findall(mes)
             if text:
-                if NICKNAME in str(text[0]):
+                if self._nickname in str(text[0]):
                     sender_name = FINDER_SENDER_NAME.findall(str(text[0]))
                     if sender_name:
                         only_text = FINDER_MESSAGE_TEXT.findall(mes)
                         text_for_message = (
-                            f"Игроку {NICKNAME} пишут в чат!\nОтправитель: {sender_name[0]} --- {only_text[0]}"
+                            f"Игроку {self._nickname} пишут в чат!\nОтправитель: {sender_name[0]} --- {only_text[0]}"
                         )
         return text_for_message

@@ -10,7 +10,6 @@ from .config import FIND_FIGHT
 from .config import FIND_PARAM_OW
 from .config import FIND_USE_ITEM_PART1
 from .config import FIND_USE_ITEM_PART2
-from .config import NICKNAME
 from .config import START_HP
 from .config import START_ITER
 from .config import START_MP
@@ -34,7 +33,7 @@ from .request import Connection
 from .request import send_telegram
 
 
-def check_iter(fight_iteration: int, start_time: float) -> float:
+def check_iter(fight_iteration: int, start_time: float, nickname: str) -> float:
     """Count iteration and time
 
     :param fight_iteration: Count iteration
@@ -46,7 +45,7 @@ def check_iter(fight_iteration: int, start_time: float) -> float:
     """
     logger.info(f"fight_iteration - '{fight_iteration}'")
     if fight_iteration % 50 == 0:
-        text = f"{NICKNAME} ----TOO LONG FIGHT---- >= {fight_iteration}"
+        text = f"{nickname} ----TOO LONG FIGHT---- >= {fight_iteration}"
         logger.error(text)
         send_telegram(text)
     end_time = time.perf_counter()
@@ -254,7 +253,7 @@ class Game:
                 self._reconnect()
             self._stop_or_hit()
             fight_iteration += 1
-            start_time = check_iter(fight_iteration, start_time)
+            start_time = check_iter(fight_iteration, start_time, self._nickname)
 
     def _change_location(self, location: Location) -> None:
         """Change location
