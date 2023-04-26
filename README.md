@@ -9,12 +9,12 @@
 3. python -m venv .venv
 4. pip install -r requirements.txt
 
-```sh
-git clone https://github.com/zimkaa/game_bot.git
-cd game_bot
-python -m venv .venv
-pip install -r requirements.txt
-```
+    ```sh
+    git clone https://github.com/zimkaa/game_bot.git
+    cd game_bot
+    python -m venv .venv
+    pip install -r requirements.txt
+    ```
 
 ## Get started
 
