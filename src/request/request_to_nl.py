@@ -79,7 +79,7 @@ class Connection:
         self.post_html(URL_GAME, self._player.login_data)
         self.result = self.get_html(URL_MAIN)
 
-    def get_html(self, site_url: str, data: dict = None) -> requests.models.Response:
+    def get_html(self, site_url: str, data: dict | None = None) -> requests.models.Response:
         """
         Executing a get request
         """
@@ -143,7 +143,7 @@ class Connection:
             send_telegram(text)
             raise Exception(text)
 
-    def post_html(self, site_url: str, data: dict = None) -> requests.models.Response:
+    def post_html(self, site_url: str, data: dict | None = None) -> requests.models.Response:
         """
         Executing a post request
         """
@@ -212,7 +212,7 @@ def send_telegram(text: str) -> None:
             logger.critical("Some trouble with TG")
 
 
-def my_ip(proxies: dict = None) -> str:
+def my_ip(proxies: dict | None = None) -> str:
     """
     Do request to get IP (need to check proxy)
     """
