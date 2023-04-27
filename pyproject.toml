@@ -26,7 +26,6 @@ build-backend = "poetry.core.masonry.api"
 pytest = "^7.2.0"
 pylint = "^2.13.4"
 black = {version = "^22.3.0", allow-prereleases = true}
-mypy = "^0.961"
 flake8 = "^6.0.0"
 flake8-bugbear = "^23.3.23"
 flake8-builtins = "^2.1.0"
@@ -34,6 +33,8 @@ pep8-naming = "^0.13.3"
 flake8-variables-names = "^0.0.5"
 flake8-pyproject = "^1.2.3"
 flake8-import-order = "^0.18.2"
+responses = "^0.23.1"
+mypy = "^1.2.0"
 
 [tool.pytest.ini_options]
 addopts = "-vvv"
@@ -61,7 +62,9 @@ extend-ignore = ["I202"]
 per-file-ignores = [
     "*/__init__.py:F401",
     "src/initial_settings.py:I100,I201",
+    "tests/test_request.py:I201",
 ]
 
 [tool.mypy]
+python_version = "3.10"
 ignore_missing_imports = true
