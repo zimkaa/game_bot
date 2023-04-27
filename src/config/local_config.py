@@ -18,7 +18,7 @@ START_ITER = 1
 
 PERSON_TYPE = MAG
 
-CHECKER_IP_SITE = os.getenv("CHECKER_IP_SITE3", "http://ipinfo.io/ip")
+CHECKER_IP_SITE = os.getenv("CHECKER_IP_SITE", "http://icanhazip.com")
 
 CHANNEL_ID = os.getenv("CHANNEL_ID")
 
