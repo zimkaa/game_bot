@@ -197,7 +197,7 @@ class Connection:
 
 
 def send_telegram(text: str) -> None:
-    # TODO change global var
+    # TODO need to refactor. Inherit class Player with settings
     if CHANNEL_ID:
         method = "https://api.telegram.org/bot" + TG_TOKEN + "/sendMessage"  # type: ignore
         result = requests.post(
