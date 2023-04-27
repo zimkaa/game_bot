@@ -58,5 +58,11 @@
         "элексир",
         "Элементалиста",
         "Эринграда"
-    ]
+    ],
+    "python.testing.pytestArgs": [
+        "tests",
+        "-vvv"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
 }
