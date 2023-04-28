@@ -5,16 +5,15 @@ from loguru import logger
 import sentry_sdk
 
 from .bot import start_bot
-
+from .config import DSN
 from .initial_settings import create_person
 from .initial_settings import get_data_from_env_file
 from .initial_settings import get_settings_from_user_input
-
 from .request import send_telegram
 
 
 sentry_sdk.init(
-    dsn="https://ac8aa8ca81124c569460f52305402573@o4505058793095168.ingest.sentry.io/4505058802597888",
+    dsn=DSN,
     traces_sample_rate=1.0,
     environment="production",
 )

@@ -9,6 +9,7 @@ from .config_hits import KICK_WARRIOR
 from .local_config import CHANNEL_ID
 from .local_config import CHECKER_IP_SITE
 from .local_config import COUNT_ITER
+from .local_config import DSN
 from .local_config import HEADER
 from .local_config import PERSON_TYPE
 from .local_config import START_HP
