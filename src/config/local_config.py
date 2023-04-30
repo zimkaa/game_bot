@@ -20,9 +20,9 @@ PERSON_TYPE = MAG
 
 CHECKER_IP_SITE = os.getenv("CHECKER_IP_SITE", "http://icanhazip.com")
 
-CHANNEL_ID = os.getenv("CHANNEL_ID")
+CHANNEL_ID = os.getenv("CHANNEL_ID", "")
 
-TG_TOKEN = os.getenv("TG_TOKEN")
+TG_TOKEN = os.getenv("TG_TOKEN", "")
 
 DSN = os.getenv("DSN")
 
