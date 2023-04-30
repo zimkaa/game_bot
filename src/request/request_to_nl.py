@@ -199,24 +199,26 @@ class Connection:
 def send_telegram(text: str) -> None:
     # TODO need to refactor. Inherit class Player with settings
     if CHANNEL_ID:
-        method = "https://api.telegram.org/bot" + TG_TOKEN + "/sendMessage"  # type: ignore
+        method = "https://api.telegram.org/bot" + TG_TOKEN + "/sendMessage"
         result = requests.post(
             method,
             data={
-                "chat_id": CHANNEL_ID,  # type: ignore
-                "text": text,  # type: ignore
+                "chat_id": CHANNEL_ID,
+                "text": text,
             },
         )
         logger.debug(f"{CHANNEL_ID=}")
         if result.status_code != 200:
-            logger.critical("Some trouble with TG")
+            text = "Some trouble with TG"
+            logger.critical(text)
+            print(text)
 
 
 def my_ip(proxies: dict | None = None) -> str:
     """
     Do request to get IP (need to check proxy)
     """
-    answer = requests.get(CHECKER_IP_SITE, headers=HEADER, proxies=proxies)  # type: ignore
+    answer = requests.get(CHECKER_IP_SITE, headers=HEADER, proxies=proxies)
     if answer.status_code != 200:
         text = "PROXY DON'T RESPONSE!!!"
         send_telegram(text)
