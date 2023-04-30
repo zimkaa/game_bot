@@ -62,7 +62,8 @@ extend-ignore = ["I202"]
 per-file-ignores = [
     "*/__init__.py:F401",
     "src/initial_settings.py:I100,I201",
-    "tests/test_request.py:I201",
+    "tests/request/test_ip.py:I201",
+    "tests/request/test_send_telegram_message.py:I201",
 ]
 
 [tool.mypy]
