@@ -1,11 +1,8 @@
 import logging
-import os
-from datetime import datetime
 from logging.handlers import RotatingFileHandler
-from pathlib import Path
 
 from loguru import logger
-import requests  # noqa: I201
+import requests
 
 from ..config import CHANNEL_ID
 from ..config import CHECKER_IP_SITE
