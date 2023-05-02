@@ -38,7 +38,9 @@ class Connection:
         self._log_in()
 
     def get_html_page_text(self) -> str:
-        return self.result.text
+        if self.result:
+            return self.result.text
+        return "Session not used yet"
 
     def _set_session(self, proxy: bool = False) -> None:
         """
