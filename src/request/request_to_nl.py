@@ -37,14 +37,6 @@ class Connection:
     def reconnect(self) -> None:
         self._log_in()
 
-    def get_result(self) -> requests.models.Response:
-        """Return class Response from module requests
-
-        :return: class Response
-        :rtype: requests.models.Response
-        """
-        return self.result
-
     def get_html_page_text(self) -> str:
         return self.result.text
 
