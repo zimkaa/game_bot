@@ -112,14 +112,15 @@ class Connection:
             _retry(data)
             return self.result
         except Exception as error:
-            standard_logger.warning(f"{self._player.nickname} {self.result.status_code=}")
-            standard_logger.warning(f"{self._player.nickname} {site_url=}")
-            standard_logger.warning(f"{self._player.nickname} {type(data)} {data=}")
-            standard_logger.warning(f"{self._player.nickname} {self.result.text=}")
-            standard_logger.warning(f"{self._player.nickname} {self.result.content=}")
-            standard_logger.warning(f"{self._player.nickname} {self.result.headers=}")
-            standard_logger.warning(f"{self._player.nickname} {self.result.reason=}")
-            standard_logger.warning(f"{self._player.nickname} {self.result.request.body=}")
+            request_log_text = f"{self._player.nickname}\n{self.result.status_code=}\n"
+            request_log_text += f"{site_url=}\n"
+            request_log_text += f"{type(data)} {data=}\n"
+            request_log_text += f"{self.result.text=}\n"
+            request_log_text += f"{self.result.content=}\n"
+            request_log_text += f"{self.result.headers=}\n"
+            request_log_text += f"{self.result.reason=}\n"
+            request_log_text += f"{self.result.request.body=}\n"
+            standard_logger.warning(request_log_text)
             text = f"{self._player.nickname} get_html something new {error=}"
             logger.error(text)
             send_telegram(text)
@@ -164,15 +165,16 @@ class Connection:
             _retry(data)
             return self.result
         except Exception as error:
-            standard_logger.warning(f"{self._player.nickname} {self.result.status_code=}")
-            standard_logger.warning(f"{self._player.nickname} {site_url=}")
-            standard_logger.warning(f"{self._player.nickname} {type(data)} {data=}")
-            standard_logger.warning(f"{self._player.nickname} {self.result.text=}")
-            standard_logger.warning(f"{self._player.nickname} {self.result.content=}")
-            standard_logger.warning(f"{self._player.nickname} {self.result.headers=}")
-            standard_logger.warning(f"{self._player.nickname} {self.result.reason=}")
-            standard_logger.warning(f"{self._player.nickname} {self.result.request.body=}")
-            text = f"{self._player.nickname} post_html something new -{error=}"
+            request_log_text = f"{self._player.nickname}\n{self.result.status_code=}\n"
+            request_log_text += f"{site_url=}\n"
+            request_log_text += f"{type(data)} {data=}\n"
+            request_log_text += f"{self.result.text=}\n"
+            request_log_text += f"{self.result.content=}\n"
+            request_log_text += f"{self.result.headers=}\n"
+            request_log_text += f"{self.result.reason=}\n"
+            request_log_text += f"{self.result.request.body=}\n"
+            standard_logger.warning(request_log_text)
+            text = f"{self._player.nickname} post_html something new {error=}"
             logger.error(text)
             send_telegram(text)
             raise Exception(text)
