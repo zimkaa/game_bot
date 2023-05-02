@@ -1,11 +1,8 @@
 import logging
-import os
-from datetime import datetime
 from logging.handlers import RotatingFileHandler
-from pathlib import Path
 
 from loguru import logger
-import requests  # noqa: I201
+import requests
 
 from ..config import CHANNEL_ID
 from ..config import CHECKER_IP_SITE
@@ -37,16 +34,10 @@ class Connection:
     def reconnect(self) -> None:
         self._log_in()
 
-    def get_result(self) -> requests.models.Response:
-        """Return class Response from module requests
-
-        :return: class Response
-        :rtype: requests.models.Response
-        """
-        return self.result
-
     def get_html_page_text(self) -> str:
-        return self.result.text
+        if self.result:
+            return self.result.text
+        return "Session not used yet"
 
     def _set_session(self, proxy: bool = False) -> None:
         """
@@ -118,14 +109,15 @@ class Connection:
             _retry(data)
             return self.result
         except Exception as error:
-            standard_logger.warning(f"{self._player.nickname} {self.result.status_code=}")
-            standard_logger.warning(f"{self._player.nickname} {site_url=}")
-            standard_logger.warning(f"{self._player.nickname} {type(data)} {data=}")
-            standard_logger.warning(f"{self._player.nickname} {self.result.text=}")
-            standard_logger.warning(f"{self._player.nickname} {self.result.content=}")
-            standard_logger.warning(f"{self._player.nickname} {self.result.headers=}")
-            standard_logger.warning(f"{self._player.nickname} {self.result.reason=}")
-            standard_logger.warning(f"{self._player.nickname} {self.result.request.body=}")
+            request_log_text = f"{self._player.nickname}\n{self.result.status_code=}\n"
+            request_log_text += f"{site_url=}\n"
+            request_log_text += f"{type(data)} {data=}\n"
+            request_log_text += f"{self.result.text=}\n"
+            request_log_text += f"{self.result.content=}\n"
+            request_log_text += f"{self.result.headers=}\n"
+            request_log_text += f"{self.result.reason=}\n"
+            request_log_text += f"{self.result.request.body=}\n"
+            standard_logger.warning(request_log_text)
             text = f"{self._player.nickname} get_html something new {error=}"
             logger.error(text)
             send_telegram(text)
@@ -170,15 +162,16 @@ class Connection:
             _retry(data)
             return self.result
         except Exception as error:
-            standard_logger.warning(f"{self._player.nickname} {self.result.status_code=}")
-            standard_logger.warning(f"{self._player.nickname} {site_url=}")
-            standard_logger.warning(f"{self._player.nickname} {type(data)} {data=}")
-            standard_logger.warning(f"{self._player.nickname} {self.result.text=}")
-            standard_logger.warning(f"{self._player.nickname} {self.result.content=}")
-            standard_logger.warning(f"{self._player.nickname} {self.result.headers=}")
-            standard_logger.warning(f"{self._player.nickname} {self.result.reason=}")
-            standard_logger.warning(f"{self._player.nickname} {self.result.request.body=}")
-            text = f"{self._player.nickname} post_html something new -{error=}"
+            request_log_text = f"{self._player.nickname}\n{self.result.status_code=}\n"
+            request_log_text += f"{site_url=}\n"
+            request_log_text += f"{type(data)} {data=}\n"
+            request_log_text += f"{self.result.text=}\n"
+            request_log_text += f"{self.result.content=}\n"
+            request_log_text += f"{self.result.headers=}\n"
+            request_log_text += f"{self.result.reason=}\n"
+            request_log_text += f"{self.result.request.body=}\n"
+            standard_logger.warning(request_log_text)
+            text = f"{self._player.nickname} post_html something new {error=}"
             logger.error(text)
             send_telegram(text)
             raise Exception(text)

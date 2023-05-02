@@ -64,6 +64,7 @@ per-file-ignores = [
     "src/initial_settings.py:I100,I201",
     "tests/request/test_ip.py:I201",
     "tests/request/test_send_telegram_message.py:I201",
+    "src/request/request_to_nl.py:I201",
 ]
 
 [tool.mypy]
