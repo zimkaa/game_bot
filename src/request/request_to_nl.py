@@ -45,18 +45,6 @@ class Connection:
         """
         return self.result
 
-    def make_file(self, text: str, reason: str) -> None:
-        """
-        Write data to file
-        """
-        now = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
-        dir_path = Path(__file__).parent.resolve()
-        file_name = f"{now}_{reason}"
-        file_path = os.path.join(dir_path, "files", f"{file_name}.txt")
-
-        with open(file_path, "w") as file:
-            file.write(text)
-
     def get_html_page_text(self) -> str:
         return self.result.text
 
