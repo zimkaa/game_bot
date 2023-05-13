@@ -5,7 +5,7 @@ from loguru import logger
 
 def timing_decorator(func):
     def wrapper(*args, **kwargs):
-        logger.critical(f"{func.__name__=}")
+        logger.critical(f"start {func.__name__=}")
         logger.debug(f"{kwargs=}")
         start_time = perf_counter()
         result = func(*args, **kwargs)
