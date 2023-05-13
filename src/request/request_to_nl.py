@@ -1,5 +1,9 @@
+import json
 import logging
+import os
+from datetime import datetime
 from logging.handlers import RotatingFileHandler
+from pathlib import Path
 
 from loguru import logger
 import requests
@@ -24,10 +28,16 @@ standard_logger = logging.getLogger("request_to_nl")
 logging.getLogger("urllib3").setLevel("WARNING")
 
 
+current_dir_path = Path(__file__).parent.resolve()
+COOKIE_FOLDER = os.path.join(current_dir_path, "cookies")
+COOKIE_FILE_PATH = os.path.join(COOKIE_FOLDER, "cookie.json")
+
+
 class Connection:
     def __init__(self, person: Player) -> None:
         self.result: requests.models.Response
         self._player = person
+        self._cookies: dict[str, str] = dict()
         self._set_session(person.proxy)
         self._log_in()
 
@@ -48,15 +58,57 @@ class Connection:
             self.session.proxies.update(self._player.proxies)
         self.session.headers.update(HEADER)
 
+    def _is_valid_cookies(self) -> bool:
+        if not os.listdir(COOKIE_FOLDER):
+            return False
+        else:
+            dt = datetime.now()
+            dt_without_microseconds = dt.replace(microsecond=0)
+            with open(COOKIE_FILE_PATH, "r") as file:
+                self._cookies = json.load(file)
+            timestamp = self._cookies.get("NeverExpi", 0)
+            if int(dt_without_microseconds.timestamp()) >= int(timestamp):
+                return False
+            return True
+
+    def _is_logged_in(self) -> bool:
+        login_text = r'show_warn("Введите Ваш логин и пароль.",'
+        if login_text in self.result.text:
+            return False
+        relogin_text = r"кнопку для очистки кэша Вашего браузера"
+        if relogin_text in self.result.text:
+            return False
+        return True
+
+    def _save_cookies(self) -> None:
+        self._cookies = self.session.cookies.get_dict()
+        with open(COOKIE_FILE_PATH, "w") as file:
+            json.dump(self._cookies, file)
+        logger.success(f"SAVE COOKIES {self._cookies=}")
+
+    def _get_login(self) -> None:
+        logger.success("LOGIN")
+        self.get_html(URL)
+        self.post_html(URL_GAME, self._player.login_data)
+        self._save_cookies()
+
     def _log_in(self) -> None:
         """
         Logging to game
 
         Also can used to relogin
         """
-        self.get_html(URL)
-        self.post_html(URL_GAME, self._player.login_data)
-        self.result = self.get_html(URL_MAIN)
+        if self._is_valid_cookies():
+            self.session.cookies.update(self._cookies)
+            self.get_html(URL_MAIN)
+        else:
+            self._get_login()
+
+        if not self._is_logged_in():
+            self._get_login()
+
+        logger.success(f"ACTUAL COOKIES {self.session.cookies.get_dict()=}")
+        self.get_html(URL_MAIN)
 
     def get_html(self, site_url: str, data: dict | None = None) -> requests.models.Response:
         """
